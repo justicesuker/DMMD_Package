@@ -1,11 +1,12 @@
 Package: DMMD
 Type: Package
 Title: Double Matched Matrix Decomposition
-Version: 1.0
+Version: 1.0.0.9000
 Date: 2019-04-08
 Author: person("Dongbang","Yuan", email = "yuandb@stat.tamu.edu", role = c("aut", "cre"))
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: Extract joint and individual signals from double matched multi-view matrices.
 License: GPL-3
-Imports: Rcpp (>= 1.0.1)
+Imports: matlib, Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.1.1

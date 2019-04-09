@@ -1,5 +1,21 @@
 require(matlib)
-col_jive = function(A, B, tol = 1e-8)
+
+#' Calculate exact column joint and individual structure of two matrices
+#' 
+#' Detailed description...What is this?
+#' @param A First matrix
+#' @param B Second matrix
+#' @param tol Tolerence, default is the square root of machine precision.
+#'
+#' @return A list that contains joint and individual signals. 
+#' \item{J1}{Joint signal of first matrix}
+#' \item{J2}{Joint signal of second matrix}
+#' \item{I1}{Individual signal of the first matrix}
+#' \item{I2}{Individual signal of the second matrix}
+#'          
+#' @examples No example is a good example...
+
+col_jive = function(A, B, tol = .Machine$double.eps^0.5)
 {
 #get basis for column spaces of A and B
 result1 = svd(A, nu = nrow(A), nv = ncol(A))
