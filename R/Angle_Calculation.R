@@ -1,13 +1,23 @@
 require(matlib)
 # source("Profile_Likelihood_Rank_selection.R")
 
-# Function that calculates principal angles between column spaces of two matrices
-# Input: two matrices
-# Output: "angle" is a vector of the principal angles
-#         "cos_angle" = is a vector of cosine principal angles
-#         "principal_vector1" = principal vectors of matrice 1 (X)
-#         "principal_vector2" = principal vectors of matrice 1 (Y)
-#         The output of "principal_vector1" and "principal_vector2" match in pairs.
+#' Function that calculates principal angles between column spaces of two matrices
+#'
+#' @param X The first matrix.
+#' @param Y The second matrix.
+#' @param tol Tolerence, default is the square root of machine precision.
+#'
+#' @return A list that contains the following:
+#' \item{angle}{A vector of principal angles with increasing order.}
+#' \item{cos_angle}{A vector of cosine principal angles}
+#' \item{principal_vector1}{Principal vectors of matrix \code{X}}
+#' \item{principal_vector2}{Principal vectors of matrix \code{Y}}
+#'
+#' @examples
+#' X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
+#' Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
+#' angle_cal(X,Y)
+#' 
 angle_cal <- function(X, Y, tol = .Machine$double.eps^0.5){
   X = as.matrix(X)
   Y = as.matrix(Y)
@@ -36,18 +46,18 @@ angle_cal <- function(X, Y, tol = .Machine$double.eps^0.5){
               "principal_vector2" = principal_mat2))
 }
 
-# Function that uses profile likelihood to cluster angle vectors into two groups.
-# Input:
-# angle_vec is the vector of principal angles
-# angle_threshold: the threshold that is used to truncate the angle vector.
-# The angle bigger than the threshold will not be considered as joint structure. Default is 15 degree. 
-# variance: the parameter that is feeded into ProfileLikCluster function, i.e whether the assumption is equal variance or unequal variance. Default is unequal.
-# cos_method: whether use angles or cosine angles as the data to cluster. Default is FALSE.
-
-# Output: 
-# joint_rank: the estimated joint rank
-# profileloglikvec: profile log likelihood calculated at each index.
-# NA if less than 2 principal angles are smaller than the threshold.
+#' Function that estimates joint rank by method of profile likelihood.
+#' @param angle_vec A vector of principal angles
+#' @param angle_threshold Threshold (radians) that is used to truncate principal angles. Default is 15 degrees.
+#' @param variance Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.
+#' @param cos_method TRUE or FALSE, i.e., whether use angles or cosine angles as the data to cluster. Default is FALSE.
+#'
+#' @return A list with the following elements:
+#' \item{joint_rank}{Estimated joint rank.}
+#' \item{profileloglikvec}{Profile log likelihood calculated at each index.
+#' The function will return NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
+#'
+#' @examples
 joint_angle_cluster <- function(angle_vec, angle_threshold = 15 * pi/180, variance = "unequal", cos_method = FALSE){
   angle_vec = angle_vec[angle_vec < angle_threshold]
   l = length(angle_vec)

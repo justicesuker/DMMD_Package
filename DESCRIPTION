@@ -4,7 +4,7 @@ Title: Double Matched Matrix Decomposition
 Version: 1.0.0.9000
 Date: 2019-04-08
 Author: person("Dongbang","Yuan", email = "yuandb@stat.tamu.edu", role = c("aut", "cre"))
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Maintainer: Dongbang Yuan <yuandb@stat.tamu.edu>
 Description: Extract joint and individual signals from double matched multi-view matrices.
 License: GPL-3
 Imports: matlib, Rcpp (>= 1.0.1)
