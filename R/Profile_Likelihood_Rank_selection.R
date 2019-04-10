@@ -1,5 +1,4 @@
 # Given vectors of x and y, return mle of variance.
-
 VarianceMLE <- function(x, y, variance = "equal"){
   m = length(x)
   n = length(y)
@@ -62,10 +61,21 @@ ProfileLikClusterEqual <- function(x){
   return(list(index = index, profileloglikvec = profileloglikvec))
 }
 
-# Larger function that can deal with unequal variance assumption
-# variance: can be either "equal" or "unequal", 
-# which is corresponding to equal variance assumption or unequal variance assumption.
-# Default is equal.
+#' Function that separates a vector into two groups using profile likelihood
+#'
+#' @param x Vector to be separated
+#' @param variance Either "equal" or "unequal", 
+#' corresponding to equal or unequal variance assumption.
+#' Default is "equal".
+#'
+#' @return A list that contains the following elements:
+#' \item{index}{The index where separates the vector \code{x}}
+#' \item{profileloglikvec}{A vector that contains profile log-likelihood for each index.}
+#'
+#' @examples
+#' x = c(100,9.5,9,8,6,5,4.5,3)
+#' ProfileLikCluster(x,"unequal")
+
 ProfileLikCluster <- function(x, variance = "equal"){
   l = length(x)
   if (variance == "equal"){
@@ -92,6 +102,3 @@ ProfileLikCluster <- function(x, variance = "equal"){
   }
 }
 
-## Example
-# x = c(100,9.5,9,8,6,5,4.5,3)
-# ProfileLikCluster(x,"unequal")

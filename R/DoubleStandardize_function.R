@@ -29,7 +29,18 @@ Matscale = function(X, center = TRUE, scale = TRUE, att = 'row'){
   return(result)
 }
 
-DoubleStandardize <- function(X, tol = 1e-16, maxIter = 100){
+#' Double standardize a matrix
+#'
+#' @param X Matrix to be standardized.
+#' @param tol Tolerance. Default is square root of machine precision.
+#' @param maxIter Maximum iteration. Default is 100.
+#'
+#' @return A list that contains:
+#' \item{Result}{The matrix after double standardization.}
+#' \item{Iter}{Number of iterations the function actually runs.}
+#'
+#' @examples
+DoubleStandardize <- function(X, tol = .Machine$double.eps^0.5, maxIter = 100){
   Xaft = X
   Xprev = X - 1
   count = 1
@@ -44,6 +55,6 @@ DoubleStandardize <- function(X, tol = 1e-16, maxIter = 100){
   }
   rownames(Xaft) = rownames(X)
   colnames(Xaft) = colnames(X)
-  return(list("result" = Xaft, "Iter" = count))
+  return(list("Result" = Xaft, "Iter" = count))
 }
 
