@@ -1,4 +1,19 @@
-# Given vectors of x and y, return mle of variance.
+#' Function that calculates MLE of variance of two vectors.
+#' 
+#' @param x The first vector
+#' @param y The second vector
+#' @param variance Either "equal" or "unequal", 
+#' corresponding to equal or unequal variance assumption.
+#' Default is "equal".
+#'
+#' @return A vector of length two. If assumes equal variance, the result is the MLE version of pooled standard deviation repeating twice. If assumes unequal variance, the result is two MLE version of sample standard deviation.
+#'
+#' @examples
+#' x = c(1,2,3)
+#' y = c(1,3,4)
+#' VarianceMLE(x,y,variance = "equal")
+#' VarianceMLE(x,y,variance = "unequal")
+#' 
 VarianceMLE <- function(x, y, variance = "equal"){
   m = length(x)
   n = length(y)
@@ -73,8 +88,8 @@ ProfileLikClusterEqual <- function(x){
 #' \item{profileloglikvec}{A vector that contains profile log-likelihood for each index.}
 #'
 #' @examples
-#' x = c(100,9.5,9,8,6,5,4.5,3)
-#' ProfileLikCluster(x,"unequal")
+#' x = c(20,9.5,9,8,6,5,4.5,3)
+#' ProfileLikCluster(x)
 
 ProfileLikCluster <- function(x, variance = "equal"){
   l = length(x)
@@ -95,7 +110,7 @@ ProfileLikCluster <- function(x, variance = "equal"){
     profileloglikvec[l-1] = ProfileLoglik(x[1:(l-1)],x[l],variance = "equal")
     index = which.max(profileloglikvec)
     if (index == 1 || index == l){
-      warning("Profile likelihood assuming unequal variance is not bigger than likelihood assuming equal variance. Printed result is based on equal variance assumption.")
+      warning("Profile likelihood assuming unequal variance is not greater than likelihood assuming equal variance. Printed result is based on equal variance assumption.")
       return(ProfileLikClusterEqual(x))
     }
     else{return(list(index = index, profileloglikvec = profileloglikvec))}
