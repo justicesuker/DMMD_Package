@@ -13,6 +13,7 @@ MatscaleRow <- function(X, center = TRUE, scale = TRUE){
       if (tempstd != 0 && !is.na(tempstd)){
         result[i,] = result[i,]/(tempstd * sqrt((p - 1) / p))
       }
+      else{stop("The variance of one row is 0. The standardization process cannot continue.")}
     }
   }
   return(result)
@@ -29,17 +30,21 @@ Matscale = function(X, center = TRUE, scale = TRUE, att = 'row'){
   return(result)
 }
 
-#' Double standardize a matrix
+#' Function that double standardizes a matrix
 #'
 #' @param X Matrix to be standardized.
 #' @param tol Tolerance. Default is square root of machine precision.
-#' @param maxIter Maximum iteration. Default is 100.
-#'
+#' @param maxIter Maximum iteration. Default is 500.
+#' @details After double standardization, the matrix will have mean zero of each row and column. Also, the l_2 norm of each row is p; l_2 norm of each column is n, where n is the number of rows and p is the number of columns of the original matrix.
+#' 
 #' @return A list that contains:
 #' \item{Result}{The matrix after double standardization.}
 #' \item{Iter}{Number of iterations the function actually runs.}
 #'
 #' @examples
+#' X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)
+#' DoubleStandardize(X)
+#' 
 DoubleStandardize <- function(X, tol = .Machine$double.eps^0.5, maxIter = 100){
   Xaft = X
   Xprev = X - 1

@@ -2,7 +2,7 @@
 % Please edit documentation in R/DoubleStandardize_function.R
 \name{DoubleStandardize}
 \alias{DoubleStandardize}
-\title{Double standardize a matrix}
+\title{Function that double standardizes a matrix}
 \usage{
 DoubleStandardize(X, tol = .Machine$double.eps^0.5, maxIter = 100)
 }
@@ -11,7 +11,7 @@ DoubleStandardize(X, tol = .Machine$double.eps^0.5, maxIter = 100)
 
 \item{tol}{Tolerance. Default is square root of machine precision.}
 
-\item{maxIter}{Maximum iteration. Default is 100.}
+\item{maxIter}{Maximum iteration. Default is 500.}
 }
 \value{
 A list that contains:
@@ -19,5 +19,13 @@ A list that contains:
 \item{Iter}{Number of iterations the function actually runs.}
 }
 \description{
-Double standardize a matrix
+Function that double standardizes a matrix
+}
+\details{
+After double standardization, the matrix will have mean zero of each row and column. Also, the l_2 norm of each row is p; l_2 norm of each column is n, where n is the number of rows and p is the number of columns of the original matrix.
+}
+\examples{
+X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)
+DoubleStandardize(X)
+
 }
