@@ -1,8 +1,7 @@
 require(matlib)
 
-#' Calculate exact column joint and individual structure of two matrices
+#' Function that calculate exact column joint and individual structure of two matrices
 #' 
-#' Detailed description...What is this?
 #' @param A First matrix
 #' @param B Second matrix
 #' @param tol Tolerence, default is the square root of machine precision.
@@ -13,7 +12,10 @@ require(matlib)
 #' \item{I1}{Individual signal of the first matrix}
 #' \item{I2}{Individual signal of the second matrix}
 #'          
-#' @examples No example is a good example...
+#' @examples 
+#' X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
+#' Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
+#' col_jive(X,Y)
 
 col_jive = function(A, B, tol = .Machine$double.eps^0.5)
 {

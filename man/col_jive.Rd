@@ -2,7 +2,7 @@
 % Please edit documentation in R/Myjivefunction.R
 \name{col_jive}
 \alias{col_jive}
-\title{Calculate exact column joint and individual structure of two matrices}
+\title{Function that calculate exact column joint and individual structure of two matrices}
 \usage{
 col_jive(A, B, tol = .Machine$double.eps^0.5)
 }
@@ -21,8 +21,10 @@ A list that contains joint and individual signals.
 \item{I2}{Individual signal of the second matrix}
 }
 \description{
-Detailed description...What is this?
+Function that calculate exact column joint and individual structure of two matrices
 }
 \examples{
-No example is a good example...
+X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
+Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
+col_jive(X,Y)
 }
