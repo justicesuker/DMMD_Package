@@ -4,13 +4,13 @@
 \alias{joint_angle_cluster}
 \title{Function that estimates joint rank by method of profile likelihood.}
 \usage{
-joint_angle_cluster(angle_vec, angle_threshold = 15 * pi/180,
+joint_angle_cluster(angle_vec, angle_threshold = 90 * pi/180,
   variance = "unequal", cos_method = FALSE)
 }
 \arguments{
 \item{angle_vec}{A vector of principal angles}
 
-\item{angle_threshold}{Threshold (radians) that is used to truncate principal angles. Default is 15 degrees.}
+\item{angle_threshold}{Optional Threshold (radians) that is used to truncate principal angles. Default is 90 degrees, i.e., no threshold is used.}
 
 \item{variance}{Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.}
 
@@ -24,4 +24,13 @@ The function will return NA with a warning message, if less or equal to 2 princi
 }
 \description{
 Function that estimates joint rank by method of profile likelihood.
+}
+\examples{
+
+data = datagen(n = 100, p = 20, joint_rank = 5, individual_rank = c(5,7), nrep = 1)
+X1 = data$X1_list[[1]]
+X2 = data$X2_list[[1]]
+angle_vec = angle_cal(X1,X2)$angle
+joint_angle_cluster(angle_vec)
+
 }

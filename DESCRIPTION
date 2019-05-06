@@ -10,3 +10,7 @@ License: GPL-3
 Imports: matlib, Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

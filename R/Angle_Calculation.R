@@ -1,5 +1,4 @@
 require(matlib)
-# source("Profile_Likelihood_Rank_selection.R")
 
 #' Function that calculates principal angles between column spaces of two matrices
 #'
@@ -48,7 +47,7 @@ angle_cal <- function(X, Y, tol = .Machine$double.eps^0.5){
 
 #' Function that estimates joint rank by method of profile likelihood.
 #' @param angle_vec A vector of principal angles
-#' @param angle_threshold Threshold (radians) that is used to truncate principal angles. Default is 15 degrees.
+#' @param angle_threshold Optional Threshold (radians) that is used to truncate principal angles. Default is 90 degrees, i.e., no threshold is used.
 #' @param variance Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.
 #' @param cos_method TRUE or FALSE, i.e., whether use angles or cosine angles as the data to cluster. Default is FALSE.
 #'
@@ -58,7 +57,14 @@ angle_cal <- function(X, Y, tol = .Machine$double.eps^0.5){
 #' The function will return NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
 #'
 #' @examples
-joint_angle_cluster <- function(angle_vec, angle_threshold = 15 * pi/180, variance = "unequal", cos_method = FALSE){
+#' 
+#' data = datagen(n = 100, p = 20, joint_rank = 5, individual_rank = c(5,7), nrep = 1)
+#' X1 = data$X1_list[[1]]
+#' X2 = data$X2_list[[1]]
+#' angle_vec = angle_cal(X1,X2)$angle
+#' joint_angle_cluster(angle_vec)
+#' 
+joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = "unequal", cos_method = FALSE){
   angle_vec = angle_vec[angle_vec < angle_threshold]
   l = length(angle_vec)
   if (l <= 2){
