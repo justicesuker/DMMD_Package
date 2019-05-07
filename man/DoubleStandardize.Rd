@@ -4,7 +4,7 @@
 \alias{DoubleStandardize}
 \title{Function that double standardizes a matrix}
 \usage{
-DoubleStandardize(X, tol = .Machine$double.eps^0.5, maxIter = 100)
+DoubleStandardize(X, tol = .Machine$double.eps^0.5, maxIter = 500)
 }
 \arguments{
 \item{X}{Matrix to be standardized.}
