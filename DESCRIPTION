@@ -7,8 +7,6 @@ Author: person("Dongbang","Yuan", email = "yuandb@stat.tamu.edu", role = c("aut"
 Maintainer: Dongbang Yuan <yuandb@stat.tamu.edu>
 Description: Extract joint and individual signals from double matched multi-view matrices.
 License: GPL-3
-Imports: matlib, Rcpp (>= 1.0.1)
-LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 Suggests: 
     knitr,

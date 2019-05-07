@@ -1,16 +1,14 @@
-require(matlib)
-
 #' Function that calculate exact column joint and individual structure of two matrices
 #' 
-#' @param A First matrix
-#' @param B Second matrix
+#' @param A The first matrix
+#' @param B The second matrix
 #' @param tol Tolerence, default is the square root of machine precision.
 #'
 #' @return A list that contains joint and individual signals. 
-#' \item{J1}{Joint signal of first matrix}
-#' \item{J2}{Joint signal of second matrix}
-#' \item{I1}{Individual signal of the first matrix}
-#' \item{I2}{Individual signal of the second matrix}
+#' \item{J1}{Joint signal of \code{A}}
+#' \item{J2}{Joint signal of \code{B}}
+#' \item{I1}{Individual signal of \code{A}}
+#' \item{I2}{Individual signal of \code{B}}
 #'          
 #' @examples 
 #' X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
@@ -83,15 +81,9 @@ else {
   }
   J = basismat1%*%tempmat
   #Construct Joint and Individual structure
-  G = t(J)%*%J
-  if (dim(G)[1] == 1 && dim(G)[2] == 1){
-    P = J%*%(1/G)%*%t(J)
-  }
-  else{
-    P = J%*%inv(G)%*%t(J)
-  }
-  J1 = P%*%A
-  J2 = P%*%B
+  P = projection(J)
+  J1 = P %*% A
+  J2 = P %*% B
   I1 = A - J1
   I2 = B - J2
   newList <- list("J1" = J1, "J2" = J2, "I1" = I1, "I2" = I2)

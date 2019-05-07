@@ -97,7 +97,3 @@ joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, varian
     return(list("joint_rank" = index, "profileloglikvec" = profileloglikvec))
   }
 }
-
-
-
-

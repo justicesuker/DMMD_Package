@@ -4,8 +4,8 @@
 #' @param p The number of columns of matrices that will be generated
 #' @param joint_rank The true joint rank of matrices to be generated 
 #' @param individual_rank A vector of length two. The true individual ranks of matrices that will be generated 
-#' @param nrep Number of datasets to be generated. A pair of matrices is called a dataset.
-#' @param std The standard deviation of normal distribution used to generatd noise matrices. Default is 0.1
+#' @param nrep Number of datasets to be generated. A pair of matrices is called a dataset
+#' @param std The standard deviation of normal distribution used to generate noise matrices. Default is 0.1
 #' 
 #' @return A list that contains the following:
 #' \item{X1_list}{A list of first matrices generated.}

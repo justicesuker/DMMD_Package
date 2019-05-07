@@ -1,19 +1,3 @@
-#' Function that calculates MLE of variance of two vectors.
-#' 
-#' @param x The first vector
-#' @param y The second vector
-#' @param variance Either "equal" or "unequal", 
-#' corresponding to equal or unequal variance assumption.
-#' Default is "equal".
-#'
-#' @return A vector of length two. If assumes equal variance, the result is the MLE version of pooled standard deviation repeating twice. If assumes unequal variance, the result is two MLE version of sample standard deviation.
-#'
-#' @examples
-#' x = c(1,2,3)
-#' y = c(1,3,4)
-#' VarianceMLE(x,y,variance = "equal")
-#' VarianceMLE(x,y,variance = "unequal")
-#' 
 VarianceMLE <- function(x, y, variance = "equal"){
   m = length(x)
   n = length(y)

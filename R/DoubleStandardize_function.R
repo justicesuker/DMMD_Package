@@ -45,7 +45,7 @@ Matscale = function(X, center = TRUE, scale = TRUE, att = 'row'){
 #' X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)
 #' DoubleStandardize(X)
 #' 
-DoubleStandardize <- function(X, tol = .Machine$double.eps^0.5, maxIter = 100){
+DoubleStandardize <- function(X, tol = .Machine$double.eps^0.5, maxIter = 500){
   Xaft = X
   Xprev = X - 1
   count = 1
