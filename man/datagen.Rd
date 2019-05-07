@@ -16,9 +16,9 @@ datagen(n = 1000, p = 300, joint_rank = 30,
 
 \item{individual_rank}{A vector of length two. The true individual ranks of matrices that will be generated}
 
-\item{nrep}{Number of datasets to be generated. A pair of matrices is called a dataset.}
+\item{nrep}{Number of datasets to be generated. A pair of matrices is called a dataset}
 
-\item{std}{The standard deviation of normal distribution used to generatd noise matrices. Default is 0.1}
+\item{std}{The standard deviation of normal distribution used to generate noise matrices. Default is 0.1}
 }
 \value{
 A list that contains the following:

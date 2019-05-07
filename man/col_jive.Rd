@@ -7,18 +7,18 @@
 col_jive(A, B, tol = .Machine$double.eps^0.5)
 }
 \arguments{
-\item{A}{First matrix}
+\item{A}{The first matrix}
 
-\item{B}{Second matrix}
+\item{B}{The second matrix}
 
 \item{tol}{Tolerence, default is the square root of machine precision.}
 }
 \value{
 A list that contains joint and individual signals. 
-\item{J1}{Joint signal of first matrix}
-\item{J2}{Joint signal of second matrix}
-\item{I1}{Individual signal of the first matrix}
-\item{I2}{Individual signal of the second matrix}
+\item{J1}{Joint signal of \code{A}}
+\item{J2}{Joint signal of \code{B}}
+\item{I1}{Individual signal of \code{A}}
+\item{I2}{Individual signal of \code{B}}
 }
 \description{
 Function that calculate exact column joint and individual structure of two matrices

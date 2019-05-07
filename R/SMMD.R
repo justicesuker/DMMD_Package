@@ -7,6 +7,9 @@
 #' for details.
 #' @param X1 The first matrix
 #' @param X2 The second matrix
+#' @param angle_threshold Optional threshold (radians) feeded to \code{joint_angle_cluster} function. Default is 90 degrees, i.e., no threshold is used.
+#' @param variance1 Either "equal" or "unequal". The assumption of equal or unequal variance used to estimate the total rank.
+#' @param variance2 Either "equal" or "unequal". The assumption of equal or unequal variance used to estimate the joint rank.
 #' @param tol Tolerence, default is the square root of machine precision.
 #' 
 #' @return A list that contains the following:
@@ -27,17 +30,17 @@
 #' result_SMMD$joint_rank
 #' result_SMMD$individual_rank
 #' 
-SMMD <- function(X1, X2, tol = .Machine$double.eps^0.5){
+SMMD <- function(X1, X2, angle_threshold = 90 * pi/180, variance1 = "unequal", variance2 = "unequal", tol = .Machine$double.eps^0.5){
   svd_x1 = svd(X1)
   svd_x2 = svd(X2)
-  r1 = ProfileLikCluster(svd_x1$d, variance = "unequal")$index
-  r2 = ProfileLikCluster(svd_x2$d, variance = "unequal")$index
+  r1 = ProfileLikCluster(svd_x1$d, variance = variance1)$index
+  r2 = ProfileLikCluster(svd_x2$d, variance = variance1)$index
   angle_result = angle_cal(X1, X2, tol = tol)
   principal_angle = angle_result$angle
   pv1 = angle_result$principal_vector1
   pv2 = angle_result$principal_vector2
   joint_rank = joint_angle_cluster(
-    principal_angle, angle_threshold = 90 * pi/180, variance = "unequal")$joint_rank
+    principal_angle, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   joint_space = (pv1[,1:joint_rank] + pv2[,1:joint_rank])/2
   J1 = projection(joint_space) %*% X1
   J2 = projection(joint_space) %*% X2

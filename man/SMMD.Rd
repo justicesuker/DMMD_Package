@@ -4,12 +4,19 @@
 \alias{SMMD}
 \title{Single Matched Matrix Decomposition}
 \usage{
-SMMD(X1, X2, tol = .Machine$double.eps^0.5)
+SMMD(X1, X2, angle_threshold = 90 * pi/180, variance1 = "unequal",
+  variance2 = "unequal", tol = .Machine$double.eps^0.5)
 }
 \arguments{
 \item{X1}{The first matrix}
 
 \item{X2}{The second matrix}
+
+\item{angle_threshold}{Optional threshold (radians) feeded to \code{joint_angle_cluster} function. Default is 90 degrees, i.e., no threshold is used.}
+
+\item{variance1}{Either "equal" or "unequal". The assumption of equal or unequal variance used to estimate the total rank.}
+
+\item{variance2}{Either "equal" or "unequal". The assumption of equal or unequal variance used to estimate the joint rank.}
 
 \item{tol}{Tolerence, default is the square root of machine precision.}
 }
