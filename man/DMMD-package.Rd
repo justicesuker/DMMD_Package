@@ -13,7 +13,11 @@
 The DESCRIPTION file:
 \packageDESCRIPTION{DMMD}
 \packageIndices{DMMD}
+The goal of DMMD package is to extract joint and individual signals from double matched multi-view matrices. For example, if we have one matrice that contains gene data collected in normal tissue and one matrice collected in cancer tissue, it is helpful to use my package to find out genes that are common to both normal and cancer tissues and genes that are unique. Another example is about recommendation system. If we have two data sets that contain rankings of movies from various people in different time, by using the package, researchers can know signals (movies) that are not changed with time. There is a R package called ``r.jive" which has similar functionality, but is slow, and can only do one-way matched matrix analysis. 
 
+In this package, the main function is SMMD, which can do single-matched matrix factorization efficiently. The rank selection is based on the method of profile likelihood. There is a function of \code{datagen} which can generate single-matched matrices that can be used to test functions. There are also some supporting functions that can double standardize a matrix, calculate principal angles, find joint structures and so on.
+
+Although the name of my package is double-matched matrix decomposition, as of now, the final DMMD function is still under investgation.
 }
 \author{
 \packageAuthor{DMMD}
@@ -24,6 +28,8 @@ Maintainer: \packageMaintainer{DMMD}
 Feng, Qing, et al. "Angle-based joint and individual variation explained." Journal of multivariate analysis 166 (2018): 241-265.
 
 Lock, Eric F., et al. "Joint and individual variation explained (JIVE) for integrated analysis of multiple data types." The annals of applied statistics 7.1 (2013): 523.
+
+Zhu, Mu, and Ali Ghodsi. "Automatic dimensionality selection from the scree plot via the use of profile likelihood." Computational Statistics & Data Analysis 51.2 (2006): 918-930.
 }
 ~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
 \keyword{ package }
