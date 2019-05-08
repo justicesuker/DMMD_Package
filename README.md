@@ -1,5 +1,5 @@
 # DMMD_Package
-R package that does decomposition on double-matched multi-view matrices
+R package that does decomposition on double-matched multi-view matrices.
 
 Description 
 -------
@@ -10,7 +10,7 @@ In this package, the main function is SMMD, which can do single-matched matrix f
 
 Although the name of my package is double-matched matrix decomposition, as of now, the final DMMD function is still under investgation.
 
-References:
+References
 -------
 [Feng, Qing, et al. "Angle-based joint and individual variation explained." Journal of multivariate analysis 166 (2018): 241-265.](https://arxiv.org/pdf/1704.02060.pdf).
 
