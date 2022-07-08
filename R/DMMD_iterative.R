@@ -1,0 +1,302 @@
+# Update function for R (individual column space)
+updateR <- function(X, P_rall, P_c, dimR){
+  n = nrow(X)
+  if (dimR == 0){
+    R = matrix(rep(0, n), nrow = n)
+  }
+  # Otherwise, use the usual update.
+  else{
+    temp_init = (diag(n) - P_c) %*% X %*% P_rall
+    R = svd(temp_init)$u[, 1:dimR, drop = F]
+  }
+  return(R)
+}
+
+# Update function for S (individual row space)
+updateS <- function(X, P_call, P_r, dimS){
+  p = ncol(X)
+  # Edge case when there is no individual.
+  if (dimS == 0){
+    S = matrix(rep(0, p), nrow = p)
+  }
+  # Otherwise, use the usual update.
+  else{
+    temp_init = P_call %*% X %*% (diag(p) - P_r)
+    S = svd(temp_init)$v[, 1:dimS, drop = F]
+  }
+  return(S)
+}
+
+# Update function for joint column structure M given two individuals.
+updateM <- function(X1, X2, R1, R2, rc){
+  n = nrow(X1)
+  if (rc == 0){
+    M = matrix(rep(0, n), nrow = n)
+    return(M)
+  }
+  else{
+    PR1 = tcrossprod(R1)
+    PR2 = tcrossprod(R2)
+    M1 = (diag(n) - PR1) %*% X1
+    M2 = (diag(n) - PR2) %*% X2
+    # Be careful of these edge cases since we need to calculate projection of (R1, R2):
+    # If R1 is zero vector
+    if (sum(R1^2) < 1e-8){
+      # If R2 is zero vector
+      if (sum(R2^2) < 1e-8){
+        # we don't need to care about the orthogonality constraint of M and R1 or R2.
+        PR = diag(n)
+      }
+      else{
+        # R is only R2
+        PR = diag(n) - projection(R2, ortho = TRUE)
+      }
+    }
+    # If R1 is not zero vector
+    else{
+      # If R2 is simply zero vector
+      if (sum(R2^2) < 1e-8){
+        # We don't need to care about the orthogonality constraint of M and R2.
+        PR = diag(n) - projection(R1, ortho = TRUE)
+      }
+      else{
+        # Usual case
+        R = cbind(R1, R2)
+        PR = diag(n) - projection(R)
+      } 
+    }
+    M = svd(PR %*% cbind(M1, M2))$u[, 1:rc, drop = F]
+    return(M)
+  }
+}
+
+# Update function for joint row structure N given two individuals S1 and S2.
+updateN <- function(X1, X2, S1, S2, rr){
+  p = ncol(X1)
+  if (rr == 0){
+    N = matrix(rep(0, p), nrow = p)
+    return(N)
+  }
+  else{
+    PS1 = tcrossprod(S1)
+    PS2 = tcrossprod(S2)
+    N1 = X1 %*% (diag(p) - PS1) 
+    N2 = X2 %*% (diag(p) - PS2) 
+    # Be careful of these edge cases since we need to calculate projection of (S1, S2):
+    # If S1 is zero vector
+    if (sum(S1^2) < 1e-8){
+      # If S2 is zero vector
+      if (sum(S2^2) < 1e-8){
+        # we don't need to care about the orthogonality constraint of N and S1 or S2.
+        PS = diag(p)
+      }
+      else{
+        # S is only S2
+        PS = diag(p) - projection(S2, ortho = TRUE)
+      }
+    }
+    # If S1 is not zero vector
+    else{
+      # If S2 is simply zero vector
+      if (sum(S2^2) < 1e-8){
+        # S is only S1
+        PS = diag(p) - projection(S1, ortho = TRUE)
+      }
+      else{
+        # Usual case
+        S = cbind(S1, S2)
+        PS = diag(p) - projection(S)
+      } 
+    }
+    N = svd(rbind(N1, N2) %*% PS)$v[, 1:rr, drop = F]
+    return(N)
+  }
+}
+
+#' Main function of iterative DMMD algorithm
+#'
+#' @param X1 The first matrix.
+#' @param x2 The second matrix.
+#' @param eps Tolerance, default is the square root of machine precision.
+#' @param r1 The total rank X1. Default is NULL, which means unknown.
+#' @param r2 The total rank X2. Default is NULL, which means unknown.
+#' @param rc The joint column rank. Default is NULL, which means unknown.
+#' @param rr The joint row rank. Default is NULL, which means unknown.
+#' @param kmax The maximum iterations. Default is 1000.
+#' @param verbose Do you want to see the progress of the function? Default is F, which means there is no progress shown.
+
+# To do: change the format of DMMD-i output, so that it agrees with the output format of normal DMMD.
+DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
+  n = nrow(X1)
+  p = ncol(X1)
+  # Check if the specified total ranks are legal
+  if (!is.null(r1) | !is.null(r2)){
+    if (max(r1,r2) > min(n, p) | min(r1, r2) <= 0){
+      stop("The specified rank is not legal, please check.")
+    }
+  }
+  # Check if the specified joint ranks are legal
+  if (!is.null(rc) | !is.null(rr)){
+    if (min(rc, rr) <= 0){
+      stop("The specified joint rank is not legal, please check.")
+    }
+    if (!is.null(r1) | !is.null(r2)){
+      if (max(rc, rr) > min(r1, r2)){
+        stop("The specified joint rank is not legal, please check.")
+      }
+    }
+  }
+  # Save the svd result of the original matrices
+  svd_x1 = svd(X1)
+  svd_x2 = svd(X2)
+
+  # Get the estimated total rank of X1 and X2. Store it as r1 and r2.
+  if (is.null(r1)){
+    r1 = ProfileLikCluster(svd_x1$d, variance = 'equal')$index
+  }
+  if (is.null(r2)){
+    r2 = ProfileLikCluster(svd_x2$d, variance = 'equal')$index
+  }
+  # Get the estimated column/row space of X1 and X2
+  X1_est_c = as.matrix(svd_x1$u[,1:r1])
+  X2_est_c = as.matrix(svd_x2$u[,1:r2])
+  X1_est_r = as.matrix(svd_x1$v[,1:r1])
+  X2_est_r = as.matrix(svd_x2$v[,1:r2])
+  
+  # Calculate joint column space
+  # Get the principal angles
+  angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = tol)
+  # Get the principal vectors
+  pv1_c = angle_result_c$principal_vector1
+  pv2_c = angle_result_c$principal_vector2
+  # If the specified joint column rank is NULL. Calculate it using the PL method specified.
+  if (is.null(rc)){
+    principal_angle_c = angle_result_c$angle
+    rc = joint_angle_cluster(principal_angle_c, variance = 'equal')$joint_rank
+  }
+  
+  # Calculate joint row space
+  angle_result_r = angle_cal(X1_est_r, X2_est_r, tol = tol)
+  # Get the principal vectors
+  pv1_r = angle_result_r$principal_vector1
+  pv2_r = angle_result_r$principal_vector2
+  # If the specified joint row rank is NULL. Calculate it using the PL method specified.
+  if (is.null(rr)){
+    principal_angle_r = angle_result_r$angle
+    rr = joint_angle_cluster(principal_angle_r,variance = 'equal')$joint_rank
+  }
+  # Get initial estimates for M and N by averaging
+  # Calculate joint column space projection matrix (this is MM')
+  if (rc == 0){
+    joint_space_c = matrix(rep(0, n), nrow = n)
+    P_c = projection(joint_space_c, ortho = TRUE)
+  }
+  else{
+    joint_space_c = (pv1_c[,1:rc] + pv2_c[,1:rc])/2
+    P_c = projection(joint_space_c)
+  }
+  
+  # Calculate joint row space projection matrix (this is NN')
+  if (rr == 0){
+    joint_space_r = matrix(rep(0, p), nrow = p)
+    P_r = projection(joint_space_r, ortho = TRUE)
+  }
+  else{
+    joint_space_r = (pv1_r[,1:rr] + pv2_r[,1:rr])/2
+    P_r = projection(joint_space_r)
+  }
+  
+  # Initialize R1, R2 and complete full column space
+  R1 = updateR(X1, P_rall = diag(p), P_c, dimR = r1 - rc)
+  P_call1 = P_c + projection(R1, ortho = TRUE)
+
+  R2 = updateR(X2, P_rall = diag(p), P_c, dimR = r2 - rc)
+  P_call2 = P_c + projection(R2, ortho = TRUE)
+
+  # Initialize S1, S2 and complete full row space
+  S1 = updateS(X1, P_call = P_call1, P_r = P_r, dimS = r1 - rr)
+  P_rall1 = P_r + projection(S1, ortho = TRUE)
+  
+  S2 = updateS(X2, P_call = P_call2, P_r = P_r, dimS = r2 - rr)
+  P_rall2 = P_r + projection(S2, ortho = TRUE)
+
+  # Calculate estimated signals and objective value
+  A1 = P_call1 %*% X1 %*% P_rall1
+  A2 = P_call2 %*% X2 %*% P_rall2
+  obj_old = sum((X1-A1)^2) + sum((X2-A2)^2)
+  
+  obj_vec = c(obj_old) 
+  k = 0
+  error = 1000
+  # Main while loop
+  while((error > eps)&(k < kmax)){
+    # Count iterations
+    k = k + 1
+    if (verbose){
+      print(paste('Iteration', k, sep = ' '))
+      print(obj_old)
+      print("Update M")
+    }
+    
+    ### Update joint M ###
+    M = updateM(X1 = X1 %*% P_rall1, X2 = X2 %*% P_rall2, R1 = R1, R2 = R2, rc = rc)
+    P_c = projection(M, ortho = TRUE)
+    P_call1 = P_c + projection(R1, ortho = TRUE)
+    P_call2 = P_c + projection(R2, ortho = TRUE)
+    
+    A1 = P_call1 %*% X1 %*% P_rall1
+    A2 = P_call2 %*% X2 %*% P_rall2
+    obj_new = sum((X1-A1)^2) + sum((X2-A2)^2)
+    if (verbose){
+      print(obj_new)
+      print("Update N")
+    }
+    
+    ### Update joint N ###
+    N = updateN(X1 = P_call1 %*% X1, X2 = P_call2 %*% X2, S1 = S1, S2 = S2, rr = rr)
+    P_r = projection(N, ortho = TRUE)
+    P_rall1 = P_r + projection(S1, ortho = TRUE)
+    P_rall2 = P_r + projection(S2, ortho = TRUE)
+
+    A1 = P_call1 %*% X1 %*% P_rall1
+    A2 = P_call2 %*% X2 %*% P_rall2
+    obj_new = sum((X1-A1)^2) + sum((X2-A2)^2)
+    
+    if (verbose){
+      print(obj_new)
+      print("Update R1, R2")
+    }
+    
+    # update R and full column space
+    R1 = updateR(X1, P_rall = P_rall1, P_c = P_c, dimR = r1 - rc)
+    P_call1 = P_c + projection(R1, ortho = TRUE)
+    R2 = updateR(X2, P_rall = P_rall2, P_c = P_c, dimR = r2 - rc)
+    P_call2 = P_c + projection(R2, ortho = TRUE)
+    A1 = P_call1 %*% X1 %*% P_rall1
+    A2 = P_call2 %*% X2 %*% P_rall2
+    obj_new = sum((X1-A1)^2) + sum((X2-A2)^2)
+    if (verbose){
+      print(obj_new)
+      print("Update S1, S2")
+    }
+    
+    # update S and full row space
+    S1 = updateS(X1, P_call = P_call1, P_r = P_r, dimS = r1 - rr)
+    P_rall1 = P_r + projection(S1, ortho = TRUE)
+    S2 = updateS(X2, P_call = P_call2, P_r = P_r, dimS = r2 - rr)
+    P_rall2 = P_r + projection(S2, ortho = TRUE)
+
+    # calculate objective function and prepare for next iteration
+    A1 = P_call1 %*% X1 %*% P_rall1
+    A2 = P_call2 %*% X2 %*% P_rall2
+    obj_new = sum((X1-A1)^2) + sum((X2-A2)^2)
+    if (verbose){
+      print(obj_new)
+    }
+    error = abs(obj_new - obj_old)
+
+    obj_old = obj_new
+    obj_vec = c(obj_vec,obj_new)
+  }
+  return(list(A1 = A1, A2 = A2, M = M, N = N, r1 = r1, r2 = r2, rc = rc, rr = rr, obj_vec = obj_vec))
+}
