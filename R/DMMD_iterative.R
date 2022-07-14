@@ -207,10 +207,10 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Ma
   }
   
   # Initialize R1, R2 and complete full column space
-  R1 = updateR(X1, P_rall = diag(p), P_c, dimR = r1 - rc)
+  R1 = updateR(X1, P_rall = diag(p), P_c = P_c, dimR = r1 - rc)
   P_call1 = P_c + projection(R1, ortho = TRUE)
 
-  R2 = updateR(X2, P_rall = diag(p), P_c, dimR = r2 - rc)
+  R2 = updateR(X2, P_rall = diag(p), P_c = P_c, dimR = r2 - rc)
   P_call2 = P_c + projection(R2, ortho = TRUE)
 
   # Initialize S1, S2 and complete full row space

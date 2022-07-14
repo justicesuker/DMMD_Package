@@ -1,10 +1,3 @@
-# Calculate Frobenius norm of a matrix
-Fnorm <- function(X){
-  X = as.matrix(X)
-  result = sqrt(sum(X^2))
-  return(result)
-}
-
 # Center and Scale for each row in a matrix.
 MatscaleRow <- function(X, center = TRUE, scale = TRUE){
   result = X
