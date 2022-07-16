@@ -1,10 +1,10 @@
 Package: DMMD
 Type: Package
 Title: Double Matched Matrix Decomposition
-Version: 1.0.0
+Version: 1.1.0
 Date: 2019-04-08
-Author: person("Dongbang","Yuan", email = "yuandb@stat.tamu.edu", role = c("aut", "cre"))
-Maintainer: Dongbang Yuan <yuandb@stat.tamu.edu>
+Author: person("Dongbang","Yuan", email = "yuandb09@gmail.com", role = c("aut", "cre"))
+Maintainer: Dongbang Yuan <yuandb09@gmail.com>
 Description: Extract joint and individual signals from double matched multi-view matrices.
 License: GPL-3
 RoxygenNote: 6.1.1

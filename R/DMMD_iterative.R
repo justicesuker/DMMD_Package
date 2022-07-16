@@ -125,8 +125,19 @@ updateN <- function(X1, X2, S1, S2, rr){
 #' @param kmax The maximum iterations. Default is 1000.
 #' @param verbose Do you want to see the progress of the function? Default is F, which means there is no progress shown.
 
-# To do: change the format of DMMD-i output, so that it agrees with the output format of normal DMMD.
-DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
+DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", throw = FALSE, method = "PL", eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
+  # Check the input of method
+  if (method != "PL" & method != "ED"){
+    stop("Method must be either 'ED' or 'PL'.")
+  }
+  # Check if the column names are equal
+  if (!identical(colnames(X1), colnames(X2))){
+    warning("This is an algorithm for double matched matrices. The column names of given matrices do not match")
+  }
+  # Check if the row names are equal
+  if (!identical(rownames(X1), rownames(X2))){
+    warning("This is an algorithm for double matched matrices. The row names of given matrices do not match")
+  }
   n = nrow(X1)
   p = ncol(X1)
   # Check if the specified total ranks are legal
@@ -152,10 +163,26 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Ma
 
   # Get the estimated total rank of X1 and X2. Store it as r1 and r2.
   if (is.null(r1)){
-    r1 = ProfileLikCluster(svd_x1$d, variance = 'equal')$index
+    if (method == "PL"){
+      r1 = ProfileLikCluster(svd_x1$d, variance = variance1)$index
+    }
+    if (method == "ED"){
+      r1 = Select_ED_Rank(svd_x1$d, maxiter = kmax)
+    }
   }
   if (is.null(r2)){
-    r2 = ProfileLikCluster(svd_x2$d, variance = 'equal')$index
+    if (method == "PL"){
+      r2 = ProfileLikCluster(svd_x2$d, variance = variance1)$index
+    }
+    if (method == "ED"){
+      r2 = Select_ED_Rank(svd_x2$d, maxiter = kmax)
+    }
+  }
+  # Check if the specified joint rank is legal
+  if (!is.null(rc) | !is.null(rr)){
+    if (max(rc,rr) > min(r1, r2)){
+      stop("The specified joint rank is not legal, please check.")
+    }
   }
   # Get the estimated column/row space of X1 and X2
   X1_est_c = as.matrix(svd_x1$u[,1:r1])
@@ -172,7 +199,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Ma
   # If the specified joint column rank is NULL. Calculate it using the PL method specified.
   if (is.null(rc)){
     principal_angle_c = angle_result_c$angle
-    rc = joint_angle_cluster(principal_angle_c, variance = 'equal')$joint_rank
+    rc = joint_angle_cluster(principal_angle_c, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = kmax)$joint_rank
   }
   
   # Calculate joint row space
@@ -183,7 +210,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Ma
   # If the specified joint row rank is NULL. Calculate it using the PL method specified.
   if (is.null(rr)){
     principal_angle_r = angle_result_r$angle
-    rr = joint_angle_cluster(principal_angle_r,variance = 'equal')$joint_rank
+    rr = joint_angle_cluster(principal_angle_r, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = kmax)$joint_rank
   }
   # Get initial estimates for M and N by averaging
   # Calculate joint column space projection matrix (this is MM')
@@ -298,5 +325,22 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, eps = .Ma
     obj_old = obj_new
     obj_vec = c(obj_vec,obj_new)
   }
-  return(list(A1 = A1, A2 = A2, M = M, N = N, r1 = r1, r2 = r2, rc = rc, rr = rr, obj_vec = obj_vec))
+  
+  # Get the decomposition and return results
+  J1_c = P_c %*% A1
+  J2_c = P_c %*% A2
+  J1_r = A1 %*% P_r
+  J2_r = A2 %*% P_r
+  I1_c = A1 - J1_c
+  I2_c = A2 - J2_c
+  I1_r = A1 - J1_r
+  I2_r = A2 - J2_r 
+  E1 = X1 - A1
+  E2 = X2 - A2
+
+  return(list(r1 = r1, r2 = r2, rc = rc, rr = rr,
+              A1 = A1, A2 = A2, E1 = E1, E2 = E2, 
+              Jc1 = J1_c, Jc2 = J2_c, Jr1 = J1_r, Jr2 = J2_r,
+              Ic1 = I1_c, Ic2 = I2_c, Ir1 = I1_r, Ir2 = I2_r, obj_vec = obj_vec))
+  
 }

@@ -34,7 +34,7 @@ FindOpt_SM <- function(X, M, r){
 }
 
 #' This function only works when either the rank of M or N equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of FindOpt_DM_Iterative
-#' @param X The original matrix
+#' @param X The original matrix (m by n)
 #' @param M The column space that the output matrix should have 
 #' @param N The row space that the output matrix should have
 #' @param r The rank of output matrix
@@ -56,21 +56,26 @@ FindOpt_SimplifiedCase<- function(X, M, N, r){
   if (r != max(r_m,r_n)){stop("This is not a simplied case, please use FindOpt_DM_Iterative function")}
   # Simple case
   if (r_m == r_n){
-    return(projM %*% X %*% projN)
+    result = projM %*% X %*% projN
+    S = matrix(rep(0, n), nrow = n)
+    R = matrix(rep(0, m), nrow = m)
+    return(list(result = result, R = R, S = S))
   }
   # If r = r_m > r_n, we need to find the rest of the row space and form them into a new matrix that contains the full row space and then calculate projM %*% X %*% proj(Nnew)
   else if (r_m > r_n){
     svd_result = svd(projM %*% X %*% (diag(n) - projN))
     S = svd_result$v[,1:(r_m - r_n), drop = FALSE]
     sol = projM %*% X %*% (projN + projection(S,ortho = TRUE))
-    return(sol)
+    R = matrix(rep(0, m), nrow = m)
+    return(list(result = sol, R = R, S = S))
   }
   # If r_m < r_n = r, we need to find the rest of the column space and form them into a new matrix that contains the full column space and then calculate proj(Mnew) %*% X %*% projN
   else{
     svd_result = svd((diag(m) - projM) %*% X %*% projN)
     R = svd_result$u[,1:(r_n - r_m), drop = FALSE]
     sol = (projM + projection(R,ortho = TRUE)) %*% X %*% projN
-    return(sol)
+    S = matrix(rep(0, n), nrow = n)
+    return(list(result = sol, R = R, S = S))
   }
 }
 
@@ -93,7 +98,8 @@ FindOpt_DM_Iterative <- function(X, M, N, r, maxiter = 1e4, tol = .Machine$doubl
   if (r_n > r){stop("The number of columns in N should not exceed r.")}
   # If this is a simplified case, call the FindOpt_SimplifiedCase function
   if (r == max(r_m,r_n)){
-    return(list(result = FindOpt_SimplifiedCase(X, M, N, r)))
+    temp = FindOpt_SimplifiedCase(X, M, N, r)
+    return(list(result = temp$result, R = temp$R, S = temp$S, num_iter = 0, opt_function_val = NA))
   }
   # Main body of the function
   else{

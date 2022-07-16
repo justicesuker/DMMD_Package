@@ -98,7 +98,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
     P_r = projection(joint_space_r)
   }
 
-  # Consider the extreme cases when joint rank is 0
+  # Consider the edge cases when joint rank is 0
   if (joint_rank_c == 0 || joint_rank_r == 0){
     if (joint_rank_c == 0){
       # Both joint column and row rank are 0: joint structure is 0.
@@ -158,7 +158,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
     result2 = FindOpt_DM_Iterative(X2, joint_space_c, joint_space_r, r2, maxiter = maxiter, tol = tol)
     signal_mat1 = result1$result
     signal_mat2 = result2$result
-    
+  
     # Get the decomposition
     J1_c = P_c %*% signal_mat1
     J2_c = P_c %*% signal_mat2
@@ -182,13 +182,15 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   colnames(J1_c) = colnames(J2_c) = colnames(J1_r) = colnames(J2_r) = names_c
   colnames(I1_c) = colnames(I2_c) = colnames(I1_r) = colnames(I2_r) = names_c
   colnames(E1) = colnames(E2) = names_c
-  # Prepare for output
-  rank_information = list("Rank 1" = r1, "Rank 2" = r2, "Joint Column Rank" = joint_rank_c, "Joint Row Rank" = joint_rank_r)
+  # Return results
   column_decomposition = list("Joint Column 1" = J1_c, "Individual Column 1" = I1_c, 
                               "Joint Column 2" = J2_c, "Individual Column 2" = I2_c)
   row_decomposition = list("Joint Row 1" = J1_r, "Individual Row 1" = I1_r, 
                            "Joint Row 2" = J2_r, "Individual Row 2" = I2_r)
   error = list("Error1" = E1, "Error2" = E2)
   
-  return(list("Rank" = rank_information, "Column Decomposition" = column_decomposition, "Row Decomposition" = row_decomposition, "Error" = error))
+  return(list(r1 = r1, r2 = r2, rc = joint_rank_c, rr = joint_rank_r,
+              A1 = signal_mat1, A2 = signal_mat2, E1 = E1, E2 = E2, 
+              Jc1 = J1_c, Jc2 = J2_c, Jr1 = J1_r, Jr2 = J2_r,
+              Ic1 = I1_c, Ic2 = I2_c, Ir1 = I1_r, Ir2 = I2_r))
 }
