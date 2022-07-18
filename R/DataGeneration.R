@@ -1,5 +1,5 @@
 # New function that generates double-matched data with different singular values.
-DoubleDataGen <- function(n = 40, p = 20, rank = c(10,8), joint_rank_col = 3, joint_rank_row = 2, nrep = 1, noise = TRUE, std1 = 0.1, std2 = 0.1, lb = 0.5, ub = 1.5){
+DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1, std1 = 0.01, std2 = 0.01, lb = 0.5, ub = 1.5){
   # Check if the inputs meet some requirements.
   if (n %% 4 != 0){stop("4 must be a factor of n.")}
   if (p %% 4 != 0){stop("4 must be a factor of p.")}
@@ -194,11 +194,8 @@ DoubleDataGen <- function(n = 40, p = 20, rank = c(10,8), joint_rank_col = 3, jo
     Signal1_list = append(Signal1_list, list(Signal1))
     Signal2_list = append(Signal2_list, list(Signal2))
     
-    # Add noise if noise = TRUE
-    if (noise){
-      E1 = matrix(rnorm(n*p, mean = 0, sd = std1), nrow = n)
-      E2 = matrix(rnorm(n*p, mean = 0, sd = std2), nrow = n)
-    }
+    E1 = matrix(rnorm(n*p, mean = 0, sd = std1), nrow = n)
+    E2 = matrix(rnorm(n*p, mean = 0, sd = std2), nrow = n)
     
     # Get the noisy matrices
     X1 = Signal1 + E1
