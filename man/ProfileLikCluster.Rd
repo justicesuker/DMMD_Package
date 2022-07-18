@@ -4,7 +4,7 @@
 \alias{ProfileLikCluster}
 \title{Function that separates a vector into two groups using profile likelihood}
 \usage{
-ProfileLikCluster(x, variance = "equal", maxindex = NULL)
+ProfileLikCluster(x, variance = "equal")
 }
 \arguments{
 \item{x}{Vector to be separated}

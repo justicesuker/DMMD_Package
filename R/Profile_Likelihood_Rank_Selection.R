@@ -52,8 +52,7 @@ ProfileLoglik <- function(x, y, variance = "equal"){
 
 # Input : An ordered (max to min) vector that is going to be clustered into two groups
 # Basic function that assumes equal variance.
-# Maxindex is an argument that controls the maximum possible index that will be considered on clustering. Default is NULL. 
-ProfileLikClusterEqual <- function(x, maxindex = NULL){
+ProfileLikClusterEqual <- function(x){
   l = length(x)
   if (l == 1){
     warning("Length of vector is 1. There is only one cluster.")
@@ -65,9 +64,7 @@ ProfileLikClusterEqual <- function(x, maxindex = NULL){
   }
   # Normal case
   else{
-    if (is.null(maxindex) || maxindex > l - 1){
-      maxindex = l - 1
-    }
+    maxindex = l - 1
     # Initialize the profile likelihood vector
     profileloglikvec = rep(NA,maxindex)
     # Consider each index that is less than or equal to maxindex
@@ -96,17 +93,17 @@ ProfileLikClusterEqual <- function(x, maxindex = NULL){
 #' x = c(20,9.5,9,8,6,5,4.5,3)
 #' ProfileLikCluster(x)
 
-ProfileLikCluster <- function(x, variance = "equal", maxindex = NULL){
+ProfileLikCluster <- function(x, variance = "equal"){
   l = length(x)
   # if variance = "equal", simply call the basic ProfileLikClusterEqual function 
   if (!variance %in% c('equal', 'unequal')){
     stop('The input of variance must be either equal or unequal.')
   }
   if (variance == "equal"){
-    return(ProfileLikClusterEqual(x, maxindex = maxindex))
+    return(ProfileLikClusterEqual(x))
   }
   # Assuming unequal variance
-  if (variance == "unequal"){
+  else{
     # Extreme cases
     if (l == 1){
       warning("Length of vector is 1. There is only one cluster.")
@@ -118,13 +115,11 @@ ProfileLikCluster <- function(x, variance = "equal", maxindex = NULL){
     }
     else if (l == 3){
       warning("Length of vector is 3. The result is based on equal variance assumption.")
-      return(ProfileLikClusterEqual(x, maxindex = maxindex))
+      return(ProfileLikClusterEqual(x))
     }
     # Normal cases
     else{
-      if (is.null(maxindex) || maxindex > l - 1){
-        maxindex = l - 1
-      }
+      maxindex = l - 1
       # Initialize the profile likelihood vector
       profileloglikvec = rep(NA,maxindex)
       for (p in 2:(maxindex - 1)){
@@ -136,14 +131,8 @@ ProfileLikCluster <- function(x, variance = "equal", maxindex = NULL){
       }
       # Calculate the profile log-likelihood assuming equal variance when index = 1. Because for only one point we cannot assume unequal variance.
       profileloglikvec[1] = ProfileLoglik(x[1],x[2:l],variance = "equal")
-      # Calculate the profile log-likelihood assuming equal variance when index = length - 1. Because for only one point we cannot assume unequal variance.
-      if (maxindex == l - 1){
-        profileloglikvec[maxindex] = ProfileLoglik(x[1:(maxindex)],x[(maxindex + 1):l],variance = "equal")
-      }
-      # Calculate the profile log-likelihood assuming unequal variance when index = maxindex.
-      if (maxindex != l - 1){
-        profileloglikvec[maxindex] = ProfileLoglik(x[1:(maxindex)],x[(maxindex + 1):l],variance = "unequal")
-      }
+      # Calculate the profile log-likelihood assuming equal variance when index = l - 1. Because for only one point we cannot assume unequal variance.
+      profileloglikvec[maxindex] = ProfileLoglik(x[1:(maxindex)],x[(maxindex + 1):l],variance = "equal")
       # Combine all the profile log-likelihood and find the maximizer which will be the output
       index = which.max(profileloglikvec)
     }

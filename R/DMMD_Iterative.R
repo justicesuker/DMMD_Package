@@ -116,7 +116,7 @@ updateN <- function(X1, X2, S1, S2, rr){
 #' Main function of iterative DMMD algorithm
 #'
 #' @param X1 The first matrix.
-#' @param x2 The second matrix.
+#' @param X2 The second matrix.
 #' @param eps Tolerance, default is the square root of machine precision.
 #' @param r1 The total rank X1. Default is NULL, which means unknown.
 #' @param r2 The total rank X2. Default is NULL, which means unknown.
@@ -125,7 +125,7 @@ updateN <- function(X1, X2, S1, S2, rr){
 #' @param kmax The maximum iterations. Default is 1000.
 #' @param verbose Do you want to see the progress of the function? Default is F, which means there is no progress shown.
 
-DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", throw = FALSE, method = "PL", eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
+DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", method = "PL", eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
   # Check the input of method
   if (method != "PL" & method != "ED"){
     stop("Method must be either 'ED' or 'PL'.")
@@ -192,25 +192,25 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
   
   # Calculate joint column space
   # Get the principal angles
-  angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = eps)
+  angle_result_c = angle_cal(X1_est_c, X2_est_c)
   # Get the principal vectors
   pv1_c = angle_result_c$principal_vector1
   pv2_c = angle_result_c$principal_vector2
   # If the specified joint column rank is NULL. Calculate it using the PL method specified.
   if (is.null(rc)){
     principal_angle_c = angle_result_c$angle
-    rc = joint_angle_cluster(principal_angle_c, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = kmax)$joint_rank
+    rc = joint_angle_cluster(principal_angle_c, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
   
   # Calculate joint row space
-  angle_result_r = angle_cal(X1_est_r, X2_est_r, tol = eps)
+  angle_result_r = angle_cal(X1_est_r, X2_est_r)
   # Get the principal vectors
   pv1_r = angle_result_r$principal_vector1
   pv2_r = angle_result_r$principal_vector2
   # If the specified joint row rank is NULL. Calculate it using the PL method specified.
   if (is.null(rr)){
     principal_angle_r = angle_result_r$angle
-    rr = joint_angle_cluster(principal_angle_r, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = kmax)$joint_rank
+    rr = joint_angle_cluster(principal_angle_r, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
   # Get initial estimates for M and N by averaging
   # Calculate joint column space projection matrix (this is MM')

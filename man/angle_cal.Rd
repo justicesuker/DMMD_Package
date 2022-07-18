@@ -4,14 +4,12 @@
 \alias{angle_cal}
 \title{Function that calculates principal angles between column spaces of two matrices}
 \usage{
-angle_cal(X, Y, tol = .Machine$double.eps^0.5)
+angle_cal(X, Y)
 }
 \arguments{
 \item{X}{The first matrix.}
 
 \item{Y}{The second matrix.}
-
-\item{tol}{Tolerence, default is the square root of machine precision.}
 }
 \value{
 A list that contains the following:

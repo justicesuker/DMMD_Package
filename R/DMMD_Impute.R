@@ -53,7 +53,7 @@ ImputeKnown <- function(data, newdata){
 
 # An iterative algorithm to do imputation based on DMMD method
 # init is "mean", "unif" or "normal"
-DMMD_Impute <- function(X1, X2, init = c('mean', 'unif', 'normal'), r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", throw = FALSE, method = method, tol = .Machine$double.eps^0.5, maxiter1 = 1e3, maxiter2 = 1e3){
+DMMD_Impute <- function(X1, X2, init = c('mean', 'unif', 'normal'), r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", method = method, tol = .Machine$double.eps^0.5, maxiter1 = 1e3, maxiter2 = 1e3){
   if (!identical(colnames(X1), colnames(X2))){
     warning("This is an algorithm for double matched matrices. The column names of given matrices do not match")
   }
@@ -70,7 +70,7 @@ DMMD_Impute <- function(X1, X2, init = c('mean', 'unif', 'normal'), r1 = NULL, r
   while (iter <= maxiter1 & err > tol){
     # Use DMMD algorithm to get the signal matrix
     temp_result = DMMD_i(X1 = X1_old, X2 = X2_old, r1 = r1, r2 = r2, rc = joint_rank_c, rr = joint_rank_r, 
-                         angle_threshold = angle_threshold, variance1 = variance1, variance2 = variance2, throw = throw, method = method, eps = tol, kmax = maxiter2)
+                         angle_threshold = angle_threshold, variance1 = variance1, variance2 = variance2, method = method, eps = tol, kmax = maxiter2)
     signal1_new = X1_old - temp_result$Error$Error1
     signal2_new = X2_old - temp_result$Error$Error2
     # Impute the missing values of old matrix with the entries of signal matrices calculated 

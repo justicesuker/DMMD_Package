@@ -5,11 +5,10 @@
 # angle_threshold: the argument that is used in calculating the joint rank, Principal angles that are greater than the threshold is not considered as joint signal. Default is 90 degree.
 # variance1. Either "equal" or "unequal". Default is "equal". This argument is used in the profile likelihood method for determining the total rank
 # variance2. Either "equal" or "unequal". Default is "equal". This argument is used in the profile likelihood method for determining the joint rank
-# throw. Either F or T. Default is F. This argument is used in the profile likelihood method for determining both total rank and joint rank.
 # method. Either "PL" (profile likelihood) or "ED" (edge distribution). Default is "PL" for determining the rank.
 # tol. Tolerence for determining convergence.
 # maxiter. Default is 1000, which is used for the maximum iteration allowed in the iterative procedure.
-DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", throw = FALSE, method = "PL", tol = .Machine$double.eps^0.5, maxiter = 1e3){
+DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", method = "PL", tol = .Machine$double.eps^0.5, maxiter = 1e3){
   # Check the input of method
   if (method != "PL" & method != "ED"){
     stop("Method must be either 'ED' or 'PL'.")
@@ -64,7 +63,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   
   # Calculate joint column space
   # Get the principal angles
-  angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = tol)
+  angle_result_c = angle_cal(X1_est_c, X2_est_c)
   principal_angle_c = angle_result_c$angle
   # Get the principal vectors
   pv1_c = angle_result_c$principal_vector1
@@ -72,7 +71,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   # If the specified joint column rank is NULL. Calculate it using the PL or ED method specified.
   if (is.null(joint_rank_c)){
     joint_rank_c = joint_angle_cluster(
-      principal_angle_c, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = maxiter)$joint_rank
+      principal_angle_c, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
   # Get the estimated column space by averaging the smallest joint_rank_c number of principal vectors  
   if (joint_rank_c > 0){
@@ -81,7 +80,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   } 
 
   # Calculate joint row space
-  angle_result_r = angle_cal(X1_est_r, X2_est_r, tol = tol)
+  angle_result_r = angle_cal(X1_est_r, X2_est_r)
   # Get the principal angles
   principal_angle_r = angle_result_r$angle
   # Get the principal vectors
@@ -90,7 +89,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   # If the specified joint row rank is NULL. Calculate it using the PL or ED method specified.
   if (is.null(joint_rank_r)){
     joint_rank_r = joint_angle_cluster(
-      principal_angle_r, angle_threshold = angle_threshold, variance = variance2, throw = throw, maxiter = maxiter)$joint_rank
+      principal_angle_r, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
   # Get the estimated row space by averaging the smallest joint_rank_r number of principal vectors 
   if (joint_rank_r > 0){

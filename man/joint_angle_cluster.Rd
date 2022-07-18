@@ -7,9 +7,7 @@
 joint_angle_cluster(
   angle_vec,
   angle_threshold = 90 * pi/180,
-  variance = "unequal",
-  throw = FALSE,
-  maxiter = 100
+  variance = "unequal"
 )
 }
 \arguments{
@@ -18,8 +16,6 @@ joint_angle_cluster(
 \item{angle_threshold}{Optional Threshold (radians) that is used to truncate principal angles. Default is 45 degrees.}
 
 \item{variance}{Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.}
-
-\item{cos_method}{TRUE or FALSE, i.e., whether use angles or cosine angles as the data to cluster. Default is FALSE.}
 }
 \value{
 A list with the following elements:
