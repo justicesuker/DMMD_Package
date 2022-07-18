@@ -70,11 +70,18 @@ angle_cal <- function(X, Y, tol = .Machine$double.eps^0.5){
 #'
 #' @examples
 #' 
-#' data = datagen(n = 100, p = 20, joint_rank = 5, individual_rank = c(5,7), nrep = 1)
-#' X1 = data$X1_list[[1]]
-#' X2 = data$X2_list[[1]]
-#' angle_vec = angle_cal(X1,X2)$angle
-#' joint_angle_cluster(angle_vec)
+#' data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1)
+#' X1 = data$X1[[1]]
+#' X2 = data$X2[[1]]
+#' svd_x1 = svd(X1)
+#' svd_x2 = svd(X2)
+#' r1 = ProfileLikCluster(svd_x1$d)$index
+#' r2 = ProfileLikCluster(svd_x2$d)$index
+#' X1_est_c = as.matrix(svd_x1$u[,1:r1])
+#' X2_est_c = as.matrix(svd_x2$u[,1:r2])
+#' angle_result_c = angle_cal(X1_est_c, X2_est_c)
+#' principal_angle_c = angle_result_c$angle
+#' joint_rank_c = joint_angle_cluster(principal_angle_c)$joint_rank
 #' 
 joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = "unequal", throw = FALSE, maxiter = 100){
   if (angle_threshold > 90 * pi/180){

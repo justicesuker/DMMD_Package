@@ -7,7 +7,7 @@ Author: person("Dongbang","Yuan", email = "yuandb09@gmail.com", role = c("aut", 
 Maintainer: Dongbang Yuan <yuandb09@gmail.com>
 Description: Extract joint and individual signals from double matched multi-view matrices.
 License: GPL-3
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
 Suggests: knitr,rmarkdown
 VignetteBuilder: knitr
 Encoding: UTF-8

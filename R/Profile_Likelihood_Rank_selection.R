@@ -4,7 +4,7 @@ VarianceMLE <- function(x, y, variance = "equal"){
   n = length(y)
   a = var(x)
   b = var(y)
-  if (is.na(x) || is.na(y)) {
+  if (any(is.na(x)) || any(is.na(y))) {
     stop("There is NA in input vectors.")
   }
   else{

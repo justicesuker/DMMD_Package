@@ -34,22 +34,19 @@ Zhu, Mu, and Ali Ghodsi. "Automatic dimensionality selection from the scree plot
 ~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
 \keyword{ package }
 \seealso{
-r.jive: Perform JIVE Decomposition for Multi-Source Data. It is created by Michael J. O'Connell and Eric F. Lock, which is also available in R.
-\code{\link[<r.jive>:<r.jive>-package]{https://cran.r-project.org/web/packages/r.jive/}}
+...
 }
 \examples{
-X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
-Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
-angle_cal(X,Y)
-x = c(20,9.5,9,8,6,5,4.5,3)
-ProfileLikCluster(x)
+data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1, std1 = 0.01, std2 = 0.01)
+X1 = data$X1[[1]]
+X2 = data$X2[[1]]
 
-data = datagen(n = 100, p = 20, joint_rank = 5, individual_rank = c(5,7), nrep = 1)
-X1 = data$X1_list[[1]]
-X2 = data$X2_list[[1]]
-angle_vec = angle_cal(X1,X2)$angle
-joint_angle_cluster(angle_vec)
-result_SMMD = SMMD(X1,X2)
-result_SMMD$joint_rank
-result_SMMD$individual_rank
+svd_x1 = svd(X1)
+svd_x2 = svd(X2)
+r1 = ProfileLikCluster(svd_x1$d)$index
+r2 = ProfileLikCluster(svd_x2$d)$index
+
+result_DMMD = DMMD(X1,X2)
+result_DMMD$rc
+result_DMMDi = DMMD_i(X1,X2)
 }
