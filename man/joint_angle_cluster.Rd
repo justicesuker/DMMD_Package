@@ -32,7 +32,7 @@ Function that estimates joint rank by method of profile likelihood.
 }
 \examples{
 
-data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1)
+data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
 X1 = data$X1[[1]]
 X2 = data$X2[[1]]
 svd_x1 = svd(X1)

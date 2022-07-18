@@ -192,7 +192,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
   
   # Calculate joint column space
   # Get the principal angles
-  angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = tol)
+  angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = eps)
   # Get the principal vectors
   pv1_c = angle_result_c$principal_vector1
   pv2_c = angle_result_c$principal_vector2
@@ -203,7 +203,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
   }
   
   # Calculate joint row space
-  angle_result_r = angle_cal(X1_est_r, X2_est_r, tol = tol)
+  angle_result_r = angle_cal(X1_est_r, X2_est_r, tol = eps)
   # Get the principal vectors
   pv1_r = angle_result_r$principal_vector1
   pv2_r = angle_result_r$principal_vector2

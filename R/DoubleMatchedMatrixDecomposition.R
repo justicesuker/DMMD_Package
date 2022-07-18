@@ -103,8 +103,8 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
     if (joint_rank_c == 0){
       # Both joint column and row rank are 0: joint structure is 0.
       if (joint_rank_r == 0){
-        signal_mat1 = svd_recover(X_1, svd_result = svd_x1, r1)
-        signal_mat2 = svd_recover(X_2, svd_result = svd_x2, r2)
+        signal_mat1 = svd_recover(X1, svd_result = svd_x1, r1)
+        signal_mat2 = svd_recover(X2, svd_result = svd_x2, r2)
         J1_c = matrix(rep(0,n*p), nrow = n, ncol = p)
         J2_c = matrix(rep(0,n*p), nrow = n, ncol = p)
         J1_r = matrix(rep(0,n*p), nrow = n, ncol = p)

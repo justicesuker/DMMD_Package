@@ -1,10 +1,10 @@
 # New function that generates double-matched data with different singular values.
-DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1, std1 = 0.01, std2 = 0.01, lb = 0.5, ub = 1.5){
+DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1, std1 = 0.1, std2 = 0.1, lb = 0.5, ub = 1.5){
   # Check if the inputs meet some requirements.
   if (n %% 4 != 0){stop("4 must be a factor of n.")}
   if (p %% 4 != 0){stop("4 must be a factor of p.")}
   if (max(rank) > min(n, p)){stop("Total rank exceeds the size of matrices.")}
-  if (max(joint_rank_col, joint_rank_row) > max(rank)){stop("Joint rank exceeds the total rank.")}
+  if (max(rc, rr) > max(rank)){stop("Joint rank exceeds the total rank.")}
   # Initialize the output of (noisy) double-matched matrices
   X1_list = list()
   X2_list = list()
@@ -13,12 +13,12 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
   Signal2_list = list()
   for (i in 1:nrep){
     # Get the individual ranks
-    individual_rank_col = rank - joint_rank_col
-    individual_rank_row = rank - joint_rank_row
+    individual_rank_col = rank - rc
+    individual_rank_row = rank - rr
     # Get the index where 1 occurs in the standard basis for the joint column space
-    joint_index_col = sample(1:(n/2),joint_rank_col)
+    joint_index_col = sample(1:(n/2),rc)
     # Get the index where 1 occurs in the standard basis for the joint row space
-    joint_index_row = sample(1:(p/2),joint_rank_row)
+    joint_index_row = sample(1:(p/2),rr)
     # Get the index where 1 occurs in the standard basis for the individual column space 1.
     individual_index1_col = sample(1:(n/4),individual_rank_col[1])
     # Get the index where 1 occurs in the standard basis for the individual column space 2.
@@ -49,8 +49,8 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     
     # Full joint column space
     # If the joint column rank is not 1, we need to do combine all the basis to be the matrix. 
-    if (joint_rank_col >= 2){
-      for (i in 2:joint_rank_col){
+    if (rc >= 2){
+      for (i in 2:rc){
         tempv_col = rep(0,n)
         tempv_col[joint_index_col[i]] = 1
         joint_matrix_col = cbind(joint_matrix_col,tempv_col)
@@ -76,7 +76,7 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     }
     
     # Edge cases.
-    if (joint_rank_col == 0){
+    if (rc == 0){
       col_space1 = individual_matrix1_col
       col_space2 = individual_matrix2_col
     }
@@ -86,10 +86,10 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     if (individual_rank_col[2] == 0){
       col_space2 = joint_matrix_col
     }
-    if (individual_rank_col[1] != 0 & joint_rank_col != 0){
+    if (individual_rank_col[1] != 0 & rc != 0){
       col_space1 = cbind(joint_matrix_col,individual_matrix1_col)
     }
-    if (individual_rank_col[2] != 0 & joint_rank_col != 0){
+    if (individual_rank_col[2] != 0 & rc != 0){
       col_space2 = cbind(joint_matrix_col,individual_matrix2_col)  
     }
     
@@ -114,8 +114,8 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     
     # Full joint row space
     # If the joint row rank is not 1, we need to do combine all the basis to be the matrix. 
-    if (joint_rank_row >= 2){
-      for (i in 2:joint_rank_row){
+    if (rr >= 2){
+      for (i in 2:rr){
         tempv_row = rep(0,p)
         tempv_row[joint_index_row[i]] = 1
         joint_matrix_row = cbind(joint_matrix_row,tempv_row)
@@ -143,7 +143,7 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     }
     
     # Edge cases.
-    if (joint_rank_row == 0){
+    if (rr == 0){
       row_space1 = individual_matrix1_row
       row_space2 = individual_matrix2_row
     }
@@ -153,10 +153,10 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, jo
     if (individual_rank_row[2] == 0){
       row_space2 = joint_matrix_row
     }
-    if (individual_rank_row[1] != 0 & joint_rank_row != 0){
+    if (individual_rank_row[1] != 0 & rr != 0){
       row_space1 = cbind(joint_matrix_row,individual_matrix1_row)
     }
-    if (individual_rank_row[2] != 0 & joint_rank_row != 0){
+    if (individual_rank_row[2] != 0 & rr != 0){
       row_space2 = cbind(joint_matrix_row,individual_matrix2_row)  
     }
     

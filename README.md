@@ -29,7 +29,7 @@ angle_cal(X,Y)
 x = c(20,9.5,9,8,6,5,4.5,3)
 ProfileLikCluster(x)
 
-data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), joint_rank_col = 2, joint_rank_row = 1, nrep = 1, std1 = 0.01, std2 = 0.01)
+data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
 X1 = data$X1[[1]]
 X2 = data$X2[[1]]
 
