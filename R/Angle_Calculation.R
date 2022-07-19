@@ -1,10 +1,10 @@
 #' Function that calculates principal angles between column spaces of two matrices
 #'
-#' @param X The first matrix.
-#' @param Y The second matrix.
+#' @param X The first matrix
+#' @param Y The second matrix
 #'
 #' @return A list that contains the following:
-#' \item{angle}{A vector of principal angles with increasing order.}
+#' \item{angle}{A vector of principal angles with increasing order}
 #' \item{cos_angle}{A vector of cosine principal angles}
 #' \item{principal_vector1}{Principal vectors of matrix \code{X}}
 #' \item{principal_vector2}{Principal vectors of matrix \code{Y}}
@@ -58,9 +58,9 @@ angle_cal <- function(X, Y){
 
 #' Function that estimates joint rank by method of profile likelihood.
 #' @param angle_vec A vector of principal angles
-#' @param angle_threshold Optional Threshold (radians) that is used to truncate principal angles. Default is 45 degrees.
-#' @param variance Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.
-#'
+#' @param angle_threshold Optional threshold (radians) that is used to truncate principal angles. Default is 90 degrees, which means all the principal angles are taken into account.
+#' @param variance Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is equal.
+#' @importFrom stats var
 #' @return A list with the following elements:
 #' \item{joint_rank}{Estimated joint rank.}
 #' \item{profileloglikvec}{Profile log likelihood calculated at each index.
@@ -81,7 +81,8 @@ angle_cal <- function(X, Y){
 #' principal_angle_c = angle_result_c$angle
 #' joint_rank_c = joint_angle_cluster(principal_angle_c)$joint_rank
 #' 
-joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = "unequal"){
+joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = c("equal", "unequal")){
+  variance = match.arg(variance)
   if (angle_threshold > 90 * pi/180){
     stop("Angle threshold cannot exceed 90 degrees.")
   }
