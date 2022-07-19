@@ -7,13 +7,13 @@
 angle_cal(X, Y)
 }
 \arguments{
-\item{X}{The first matrix.}
+\item{X}{The first matrix}
 
-\item{Y}{The second matrix.}
+\item{Y}{The second matrix}
 }
 \value{
 A list that contains the following:
-\item{angle}{A vector of principal angles with increasing order.}
+\item{angle}{A vector of principal angles with increasing order}
 \item{cos_angle}{A vector of cosine principal angles}
 \item{principal_vector1}{Principal vectors of matrix \code{X}}
 \item{principal_vector2}{Principal vectors of matrix \code{Y}}

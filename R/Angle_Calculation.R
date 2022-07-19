@@ -57,17 +57,16 @@ angle_cal <- function(X, Y){
 }
 
 #' Function that estimates joint rank by method of profile likelihood.
+#' @importFrom stats var
 #' @param angle_vec A vector of principal angles
 #' @param angle_threshold Optional threshold (radians) that is used to truncate principal angles. Default is 90 degrees, which means all the principal angles are taken into account.
-#' @param variance Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is equal.
-#' @importFrom stats var
+#' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
 #' @return A list with the following elements:
-#' \item{joint_rank}{Estimated joint rank.}
-#' \item{profileloglikvec}{Profile log likelihood calculated at each index.
-#' The function will return NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
-#'
+#' \item{joint_rank}{Estimated joint rank}
+#' \item{profileloglikvec}{Profile log likelihood calculated at each index. Function returns NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
+
+#' @export
 #' @examples
-#' 
 #' data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
 #' X1 = data$X1[[1]]
 #' X2 = data$X2[[1]]
@@ -78,8 +77,7 @@ angle_cal <- function(X, Y){
 #' X1_est_c = as.matrix(svd_x1$u[,1:r1])
 #' X2_est_c = as.matrix(svd_x2$u[,1:r2])
 #' angle_result_c = angle_cal(X1_est_c, X2_est_c)
-#' principal_angle_c = angle_result_c$angle
-#' joint_rank_c = joint_angle_cluster(principal_angle_c)$joint_rank
+#' joint_rank_c = joint_angle_cluster(angle_result_c$angle)$joint_rank
 #' 
 joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = c("equal", "unequal")){
   variance = match.arg(variance)
@@ -151,8 +149,16 @@ joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, varian
   }
 }
 
-#' Function that estimates joint row and column space by SUM-PCA.
-#' X is the concatenated matrices (matched by rows)
+#' Function that estimates joint column basis for multiple matrices with the same number of rows by SUM-PCA.
+#'
+#' @param X The column concatenated matrices (matched by rows)
+#' @param k The number of matrices that are concatenated. Default is 2
+#' @param joint_rank The joint rank if known. Default is NULL, which means profile likelihood method is applied to \code{X} for estimating the joint rank
+#' 
+#' @return A list that contains the following:
+#' \item{result}{The joint column basis matrix}
+#' \item{joint_rank}{Estimated joint rank, if not given}
+#'
 SUM_PCA_joint <- function(X, k = 2, joint_rank = NULL){
   n = dim(X)[1]
   p = dim(X)[2]/k
@@ -163,7 +169,7 @@ SUM_PCA_joint <- function(X, k = 2, joint_rank = NULL){
   }
   svd_x = svd(X)
   if (is.null(joint_rank)){
-    joint_rank = ProfileLikCluster(svd_x$d, variance = 'equal')$index
+    joint_rank = ProfileLikCluster(svd_x$d)$index
   }
   result = svd_x$u[,1:joint_rank, drop = FALSE]
   return(list('result' = result, 'joint_rank' = joint_rank))

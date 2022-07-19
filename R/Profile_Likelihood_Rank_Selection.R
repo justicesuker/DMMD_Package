@@ -1,5 +1,13 @@
-# Calculate the MLE of variance of two vectors, if variance = "equal", we assume the variance of the two vectors are equal.
-VarianceMLE <- function(x, y, variance = "equal"){
+#' Calculate the MLE of variance of two vectors.
+#' @importFrom stats var
+#' @param x The first vector
+#' @param y The second vector
+#' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
+#' 
+#' @return A vector of length 2 that contains the estimated variance for the two vectors
+#'
+VarianceMLE <- function(x, y, variance = c("equal", "unequal")){
+  variance = match.arg(variance)
   m = length(x)
   n = length(y)
   a = var(x)
@@ -38,9 +46,16 @@ VarianceMLE <- function(x, y, variance = "equal"){
   }
 }
 
-# Calculate the profile log-likelihood of given two vectors assuming that they come from two normal distributions.
-# When variance = "equal", we further assume the two distributions share the same variance.
-ProfileLoglik <- function(x, y, variance = "equal"){
+#' Calculate the profile log-likelihood of given two data vectors assuming normal distributions.
+#' @importFrom stats dnorm
+#' @param x The first data vector
+#' @param y The second data vector
+#' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
+#'
+#' @return The calculated profile log-likelihood
+#'
+ProfileLoglik <- function(x, y, variance = c("equal", "unequal")){
+  variance = match.arg(variance)
   mu1 = mean(x)
   mu2 = mean(y)
   sigmaMLE = sqrt(VarianceMLE(x,y,variance))
@@ -50,8 +65,17 @@ ProfileLoglik <- function(x, y, variance = "equal"){
   return(result)
 }
 
-# Input : An ordered (max to min) vector that is going to be clustered into two groups
-# Basic function that assumes equal variance.
+#' Preliminary function that separates a vector into two groups using profile likelihood assuming equal variance.
+#'
+#' @param x An ordered (max to min) vector to be clustered into two groups
+#'
+#' @return A list that contains the following elements:
+#' \item{index}{The index that separates the vector \code{x}. The element at the index is considered in the first cluster}
+#' \item{profileloglikvec}{A vector containing profile log-likelihood for each index}
+#'
+#' @examples
+#' x = c(20,9.5,9,8,6,5,4.5,3)
+#' ProfileLikClusterEqual(x)
 ProfileLikClusterEqual <- function(x){
   l = length(x)
   if (l == 1){
@@ -83,17 +107,18 @@ ProfileLikClusterEqual <- function(x){
 
 #' Function that separates a vector into two groups using profile likelihood
 #'
-#' @param x Vector to be separated
-#' @param variance Either "equal" or "unequal", corresponding to equal or unequal variance assumption. Default is "equal".
+#' @param x An ordered (max to min) vector to be clustered into two groups
+#' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
 #' @return A list that contains the following elements:
-#' \item{index}{The index where separates the vector \code{x}}
-#' \item{profileloglikvec}{A vector with profile log-likelihood for each index.}
-#'
+#' \item{index}{The index where separates the vector \code{x}. The element at the index is considered in the first cluster}
+#' \item{profileloglikvec}{A vector containing profile log-likelihood for each index}
+
+#' @export
 #' @examples
 #' x = c(20,9.5,9,8,6,5,4.5,3)
 #' ProfileLikCluster(x)
-
-ProfileLikCluster <- function(x, variance = "equal"){
+ProfileLikCluster <- function(x, variance = c("equal", "unequal")){
+  variance = match.arg(variance)
   l = length(x)
   # if variance = "equal", simply call the basic ProfileLikClusterEqual function 
   if (!variance %in% c('equal', 'unequal')){
@@ -130,7 +155,7 @@ ProfileLikCluster <- function(x, variance = "equal"){
         profileloglikvec[p] = ProfileLoglik(data1, data2, variance = "unequal")
       }
       # Calculate the profile log-likelihood assuming equal variance when index = 1. Because for only one point we cannot assume unequal variance.
-      profileloglikvec[1] = ProfileLoglik(x[1],x[2:l],variance = "equal")
+      profileloglikvec[1] = ProfileLoglik(x[1],x[2:l], variance = "equal")
       # Calculate the profile log-likelihood assuming equal variance when index = l - 1. Because for only one point we cannot assume unequal variance.
       profileloglikvec[maxindex] = ProfileLoglik(x[1:(maxindex)],x[(maxindex + 1):l],variance = "equal")
       # Combine all the profile log-likelihood and find the maximizer which will be the output

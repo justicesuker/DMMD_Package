@@ -2,12 +2,22 @@
 % Please edit documentation in R/Angle_Calculation.R
 \name{SUM_PCA_joint}
 \alias{SUM_PCA_joint}
-\title{Function that estimates joint row and column space by SUM-PCA.
-X is the concatenated matrices (matched by rows)}
+\title{Function that estimates joint column basis for multiple matrices with the same number of rows by SUM-PCA.}
 \usage{
 SUM_PCA_joint(X, k = 2, joint_rank = NULL)
 }
+\arguments{
+\item{X}{The column concatenated matrices (matched by rows)}
+
+\item{k}{The number of matrices that are concatenated. Default is 2}
+
+\item{joint_rank}{The joint rank if known. Default is NULL, which means profile likelihood method is applied to \code{X} for estimating the joint rank}
+}
+\value{
+A list that contains the following:
+\item{result}{The joint column basis matrix}
+\item{joint_rank}{Estimated joint rank, if not given}
+}
 \description{
-Function that estimates joint row and column space by SUM-PCA.
-X is the concatenated matrices (matched by rows)
+Function that estimates joint column basis for multiple matrices with the same number of rows by SUM-PCA.
 }

@@ -7,27 +7,25 @@
 joint_angle_cluster(
   angle_vec,
   angle_threshold = 90 * pi/180,
-  variance = "unequal"
+  variance = c("equal", "unequal")
 )
 }
 \arguments{
 \item{angle_vec}{A vector of principal angles}
 
-\item{angle_threshold}{Optional Threshold (radians) that is used to truncate principal angles. Default is 45 degrees.}
+\item{angle_threshold}{Optional threshold (radians) that is used to truncate principal angles. Default is 90 degrees, which means all the principal angles are taken into account.}
 
-\item{variance}{Either "equal" or "unequal", i.e whether the assumption is equal variance or unequal variance. Default is unequal.}
+\item{variance}{Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.}
 }
 \value{
 A list with the following elements:
-\item{joint_rank}{Estimated joint rank.}
-\item{profileloglikvec}{Profile log likelihood calculated at each index.
-The function will return NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
+\item{joint_rank}{Estimated joint rank}
+\item{profileloglikvec}{Profile log likelihood calculated at each index. Function returns NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
 }
 \description{
 Function that estimates joint rank by method of profile likelihood.
 }
 \examples{
-
 data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
 X1 = data$X1[[1]]
 X2 = data$X2[[1]]
@@ -38,7 +36,6 @@ r2 = ProfileLikCluster(svd_x2$d)$index
 X1_est_c = as.matrix(svd_x1$u[,1:r1])
 X2_est_c = as.matrix(svd_x2$u[,1:r2])
 angle_result_c = angle_cal(X1_est_c, X2_est_c)
-principal_angle_c = angle_result_c$angle
-joint_rank_c = joint_angle_cluster(principal_angle_c)$joint_rank
+joint_rank_c = joint_angle_cluster(angle_result_c$angle)$joint_rank
 
 }

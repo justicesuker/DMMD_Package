@@ -4,17 +4,17 @@
 \alias{ProfileLikCluster}
 \title{Function that separates a vector into two groups using profile likelihood}
 \usage{
-ProfileLikCluster(x, variance = "equal")
+ProfileLikCluster(x, variance = c("equal", "unequal"))
 }
 \arguments{
-\item{x}{Vector to be separated}
+\item{x}{An ordered (max to min) vector to be clustered into two groups}
 
-\item{variance}{Either "equal" or "unequal", corresponding to equal or unequal variance assumption. Default is "equal".}
+\item{variance}{Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.}
 }
 \value{
 A list that contains the following elements:
-\item{index}{The index where separates the vector \code{x}}
-\item{profileloglikvec}{A vector with profile log-likelihood for each index.}
+\item{index}{The index where separates the vector \code{x}. The element at the index is considered in the first cluster}
+\item{profileloglikvec}{A vector containing profile log-likelihood for each index}
 }
 \description{
 Function that separates a vector into two groups using profile likelihood
