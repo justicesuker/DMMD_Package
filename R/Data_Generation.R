@@ -1,4 +1,21 @@
-# New function that generates double-matched data with different singular values.
+#' Function that generates double-matched data matrices.
+#' @importFrom stats runif
+#' @importFrom stats rnorm
+#' @param n Number of rows of data matrix to be generated
+#' @param p Number of rows of data matrix to be generated
+#' @param rank The vector of total ranks of the two matrices to be generated 
+#' @param rc The joint column rank
+#' @param rr The joint row rank
+#' @param nrep How many pairs of double-matched matrices that you want to generate?
+#' @param std1 The standard deviation of the first Gaussian noise matrix
+#' @param std2 The standard deviation of the second Gaussian noise matrix
+#' @param lb The lower bound for the singular values. Generated singular values are further scaled so that their sum of square equals to the total rank.
+#' @param ub The upper bound for the singular values. Generated singular values are further scaled so that their sum of square equals to the total rank.
+#'
+#' @export
+#' @examples 
+#' data = DoubleDataGen()
+#' head(data$X1[[1]])
 DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1, std1 = 0.1, std2 = 0.1, lb = 0.5, ub = 1.5){
   # Check if the inputs meet some requirements.
   if (n %% 4 != 0){stop("4 must be a factor of n.")}

@@ -1,13 +1,14 @@
 Package: DMMD
 Type: Package
 Title: Double Matched Matrix Decomposition
-Version: 1.1.0
+Version: 1.0.0.0000
 Date: 2019-04-08
-Author: person("Dongbang","Yuan", email = "yuandb09@gmail.com", role = c("aut", "cre"))
+Authors@R: c(person("Dongbang","Yuan", email = "yuandb09@gmail.com", role = c("aut", "cre")), person("Irina","Gaynanova", email = "irinag@stat.tamu.edu", role = "aut"))
 Maintainer: Dongbang Yuan <yuandb09@gmail.com>
-Description: Extract joint and individual signals from double matched multi-view matrices.
+Description: Extract joint and individual signals from double matched multi-view matrices <doi: 10.1080/10618600.2022.2067860>.
+Imports: stats
 License: GPL-3
 RoxygenNote: 7.2.0
-Suggests: knitr,rmarkdown
+Suggests: knitr, rmarkdown, ComplexHeatmap, ggplot2
 VignetteBuilder: knitr
 Encoding: UTF-8
