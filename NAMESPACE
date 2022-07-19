@@ -2,8 +2,11 @@
 
 export(DoubleDataGen)
 export(ProfileLikCluster)
+export(Select_ED_Rank)
 export(joint_angle_cluster)
 importFrom(stats,dnorm)
+importFrom(stats,lm)
 importFrom(stats,rnorm)
 importFrom(stats,runif)
+importFrom(stats,sd)
 importFrom(stats,var)

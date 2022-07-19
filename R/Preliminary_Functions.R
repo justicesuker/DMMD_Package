@@ -1,4 +1,4 @@
-# Center and Scale for each row in a matrix.
+# Center and scale for each row in a matrix.
 MatscaleRow <- function(X, center = TRUE, scale = TRUE){
   result = X
   if (center){
@@ -23,8 +23,9 @@ MatscaleRow <- function(X, center = TRUE, scale = TRUE){
   return(result)
 }
 
-# General function that does center and scale for a matrix, either row-wise or column-wise.
-Matscale = function(X, center = TRUE, scale = TRUE, att = 'row'){
+# Center and scale for a matrix, either row-wise or column-wise.
+Matscale = function(X, center = TRUE, scale = TRUE, att = c('row', 'col')){
+  att = match.arg(att)
   if (att == 'row'){
     result = MatscaleRow(X, center = center, scale = scale)
   }
@@ -36,15 +37,15 @@ Matscale = function(X, center = TRUE, scale = TRUE, att = 'row'){
 }
 
 #' Function that double standardizes a matrix
-#'
-#' @param X Matrix to be standardized.
-#' @param tol Tolerance. Default is square root of machine precision.
-#' @param maxIter Maximum iteration. Default is 500.
-#' @details After double standardization, the matrix will have mean zero of each row and column. Also, the l_2 norm of each row is p; l_2 norm of each column is n, where n is the number of rows and p is the number of columns of the original matrix.
+#' @importFrom stats sd
+#' @param X Original matrix to be double-standardized
+#' @param tol Tolerance. Default is square root of machine precision
+#' @param maxIter Maximum iteration. Default is 500
+#' @details After double standardization, the matrix will have mean zero and (population) variance one for each row and column. 
 #' 
 #' @return A list that contains:
 #' \item{Result}{The matrix after double standardization.}
-#' \item{Iter}{Number of iterations the function actually runs.}
+#' \item{Iter}{Number of iterations the function runs.}
 #'
 #' @examples
 #' X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)

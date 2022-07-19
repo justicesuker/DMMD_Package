@@ -7,22 +7,22 @@
 DoubleStandardize(X, tol = .Machine$double.eps^0.5, maxIter = 500)
 }
 \arguments{
-\item{X}{Matrix to be standardized.}
+\item{X}{Original matrix to be double-standardized}
 
-\item{tol}{Tolerance. Default is square root of machine precision.}
+\item{tol}{Tolerance. Default is square root of machine precision}
 
-\item{maxIter}{Maximum iteration. Default is 500.}
+\item{maxIter}{Maximum iteration. Default is 500}
 }
 \value{
 A list that contains:
 \item{Result}{The matrix after double standardization.}
-\item{Iter}{Number of iterations the function actually runs.}
+\item{Iter}{Number of iterations the function runs.}
 }
 \description{
 Function that double standardizes a matrix
 }
 \details{
-After double standardization, the matrix will have mean zero of each row and column. Also, the l_2 norm of each row is p; l_2 norm of each column is n, where n is the number of rows and p is the number of columns of the original matrix.
+After double standardization, the matrix will have mean zero and (population) variance one for each row and column.
 }
 \examples{
 X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)

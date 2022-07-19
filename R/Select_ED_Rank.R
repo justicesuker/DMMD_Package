@@ -1,7 +1,18 @@
-# Function that uses edge distribution (ED) method to calculate the rank i.e., the number of factors
-# Refer to Select_ED_Rank_K in D-CCA.py in EDRank_FromDCCA folder.
-# Onatski, Alexei. "Determining the number of factors from empirical distribution of eigenvalues." 
-# The Review of Economics and Statistics 92, no. 4 (2010): 1004-1016.
+#' Function that uses edge distribution (ED) method to calculate the rank i.e., the number of factors.
+#' @description This function is a direct translation from Python function 'select_K_by_ED' in dcca.py.
+#' @references Onatski, Alexei. “DETERMINING THE NUMBER OF FACTORS FROM EMPIRICAL DISTRIBUTION OF EIGENVALUES.” The Review of Economics and Statistics 92, no. 4 (2010): 1004–16. http://www.jstor.org/stable/40985808.
+#' @importFrom stats lm
+#' @param x The input vector for selecting the rank
+#' @param k_max The maximum rank to be considered, restricted to less than or equal to half of the length of the vector. If not given, one tenth of the length of the vector is considered in general
+#' @param k_min The minimum rank to be considered. If not given, it is treated as 1
+#' @param maxiter The maximum iterations for the algorithm. Default 100
+#'
+#' @return The rank estimated by ED method
+#' @export
+#'
+#' @examples
+#' x = c(20,9.5,9,8,6,5,4.5,3)
+#' Select_ED_Rank(x)
 Select_ED_Rank <- function(x, k_max = NULL, k_min = NULL, maxiter = 100){
   m = length(x)
   if (is.null(k_min)){
