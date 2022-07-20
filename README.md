@@ -6,18 +6,6 @@ Description
 
 The goal of DMMD package is to extract joint and individual signals from double-matched multi-view matrices. The main function is DMMD_Fit, which can do double-matched matrix factorization efficiently. DMMD_i is the updated version of DMMD_Fit which also updates the joint structure but is less efficient. The rank selection is based on the method of profile likelihood or edge distribution. There is a function of \code{DoubleDataGen} which can generate double-matched matrices that can be used to test functions.
 
-Reference
--------
-[Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860](https://www.tandfonline.com/doi/abs/10.1080/10618600.2022.2067860)
-
-See also
--------
-[Feng, Qing, et al. "Angle-based joint and individual variation explained." Journal of multivariate analysis 166 (2018): 241-265.](https://arxiv.org/pdf/1704.02060.pdf).
-
-[Lock, Eric F., et al. "Joint and individual variation explained (JIVE) for integrated analysis of multiple data types." The annals of applied statistics 7.1 (2013): 523.](https://arxiv.org/pdf/1102.4110.pdf).
-
-[Zhu, Mu, and Ali Ghodsi. "Automatic dimensionality selection from the scree plot via the use of profile likelihood." Computational Statistics & Data Analysis 51.2 (2006): 918-930.](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.3768&rep=rep1&type=pdf).
-
 Installation
 -------
 `devtools::install_github("justicesuker/DMMD_package")`
@@ -57,3 +45,14 @@ result_DMMD = DMMD_Fit(X1,X2)
 result_DMMD$rc
 result_DMMDi = DMMD_i(X1,X2, verbose = TRUE)
 ```
+Reference
+-------
+[Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860](https://www.tandfonline.com/doi/abs/10.1080/10618600.2022.2067860)
+
+See also
+-------
+[Feng, Qing, et al. "Angle-based joint and individual variation explained." Journal of multivariate analysis 166 (2018): 241-265.](https://arxiv.org/pdf/1704.02060.pdf).
+
+[Lock, Eric F., et al. "Joint and individual variation explained (JIVE) for integrated analysis of multiple data types." The annals of applied statistics 7.1 (2013): 523.](https://arxiv.org/pdf/1102.4110.pdf).
+
+[Zhu, Mu, and Ali Ghodsi. "Automatic dimensionality selection from the scree plot via the use of profile likelihood." Computational Statistics & Data Analysis 51.2 (2006): 918-930.](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.3768&rep=rep1&type=pdf).
