@@ -4,7 +4,7 @@ R package that performs Double-Matched Matrix Decomposition (DMMD).
 Description
 -------
 
-The goal of DMMD package is to extract joint and individual signals from double-matched multi-view matrices. The main function is DMMD_Fit, which can do double-matched matrix factorization efficiently. DMMD_i is the updated version of DMMD_Fit which also updates the joint structure but is less efficient. The rank selection is based on the method of profile likelihood or edge distribution. There is a function of \code{DoubleDataGen} which can generate double-matched matrices that can be used to test functions.
+The goal of DMMD package is to extract joint and individual signals from double-matched multi-view matrices. The main function is *DMMD_Fit*, which can do double-matched matrix factorization efficiently. *DMMD_i* is the updated version of *DMMD_Fit* which also updates the joint structure but is less efficient. The rank selection is based on the method of profile likelihood or edge distribution. *DoubleDataGen* generates simulated double-matched matrices.
 
 Installation
 -------
