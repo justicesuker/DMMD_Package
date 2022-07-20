@@ -46,11 +46,6 @@ Matscale = function(X, center = TRUE, scale = TRUE, att = c('row', 'col')){
 #' @return A list that contains:
 #' \item{Result}{The matrix after double standardization.}
 #' \item{Iter}{Number of iterations the function runs.}
-#'
-#' @examples
-#' X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)
-#' DoubleStandardize(X)
-#' 
 DoubleStandardize <- function(X, tol = .Machine$double.eps^0.5, maxIter = 500){
   # Initialize 
   # Xaft stands for the matrix after one iteration

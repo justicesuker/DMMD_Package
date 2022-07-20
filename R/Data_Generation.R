@@ -1,6 +1,7 @@
 #' Function that generates double-matched data matrices.
 #' @importFrom stats runif
 #' @importFrom stats rnorm
+#'
 #' @param n Number of rows of data matrix to be generated
 #' @param p Number of rows of data matrix to be generated
 #' @param rank The vector of total ranks of the two matrices to be generated 
@@ -11,7 +12,19 @@
 #' @param std2 The standard deviation of the second Gaussian noise matrix
 #' @param lb The lower bound for the singular values. Generated singular values are further scaled so that their sum of square equals to the total rank.
 #' @param ub The upper bound for the singular values. Generated singular values are further scaled so that their sum of square equals to the total rank.
-#'
+#' 
+#' @return A list with the following elements:
+#' \item{X1}{A list of generated first noisy data matrices, with length nrep}
+#' \item{X2}{A list of generated second noisy data matrices, with length nrep}
+#' \item{A1}{A list of generated first low-rank signal matrices, with length nrep}
+#' \item{A2}{A list of generated second low-rank signal matrices, with length nrep}
+#' \item{M}{A list of generated joint column basis matrices, with length nrep}
+#' \item{N}{A list of generated joint row basis matrices, with length nrep}
+#' \item{R1}{A list of generated first individual column basis matrices, with length nrep}
+#' \item{R2}{A list of generated second individual column basis matrices, with length nrep}
+#' \item{S1}{A list of generated first individual row basis matrices, with length nrep}
+#' \item{S2}{A list of generated second individual row basis matrices, with length nrep}
+#' 
 #' @export
 #' @examples 
 #' data = DoubleDataGen()
@@ -28,6 +41,15 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep =
   # Initialize the output of corresponding signal matrices 
   Signal1_list = list()
   Signal2_list = list()
+  # Initialize the output of joint signal matrices 
+  M_list = list()
+  N_list = list()
+  # Initialize the output of individual column signal matrices
+  R1_list = list()
+  R2_list = list()
+  # Initialize the output of individual row signal matrices
+  S1_list = list()
+  S2_list = list()
   for (i in 1:nrep){
     # Get the individual ranks
     individual_rank_col = rank - rc
@@ -206,11 +228,7 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep =
     # Transform the original standard basis containing only 0,1 to non-standard basis and get the signal matrices
     Signal1 = col_space1 %*% R1_col %*% Dvec1 %*% R1_row %*% t(row_space1)
     Signal2 = col_space2 %*% R2_col %*% Dvec2 %*% R2_row %*% t(row_space2)
-    
-    # Append the output list
-    Signal1_list = append(Signal1_list, list(Signal1))
-    Signal2_list = append(Signal2_list, list(Signal2))
-    
+
     E1 = matrix(rnorm(n*p, mean = 0, sd = std1), nrow = n)
     E2 = matrix(rnorm(n*p, mean = 0, sd = std2), nrow = n)
     
@@ -221,10 +239,22 @@ DoubleDataGen <- function(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep =
     # Append the output list
     X1_list = append(X1_list, list(X1))
     X2_list = append(X2_list, list(X2))
+    
+    Signal1_list = append(Signal1_list, list(Signal1))
+    Signal2_list = append(Signal2_list, list(Signal2))
+    
+    M_list = list(M_list, list(joint_matrix_col))
+    N_list = list(N_list, list(joint_matrix_row))
+    
+    R1_list = list(R1_list, list(individual_matrix1_col))
+    R2_list = list(R2_list, list(individual_matrix2_col))
+    
+    S1_list = list(S1_list, list(individual_matrix1_row))
+    S2_list = list(S2_list, list(individual_matrix2_row))
   }
   return(list(X1 = X1_list, X2 = X2_list, 
               A1 = Signal1_list, A2 = Signal2_list,
-              M = joint_matrix_col, N = joint_matrix_row, 
-              R1 = individual_matrix1_col, R2 = individual_matrix2_col,
-              S1 = individual_matrix1_row, S2 = individual_matrix2_row))
+              M = M_list, N = N_list, 
+              R1 = R1_list, R2 = R2_list,
+              S1 = S1_list, S2 = S2_list))
 }

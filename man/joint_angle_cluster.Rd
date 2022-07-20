@@ -25,17 +25,3 @@ A list with the following elements:
 \description{
 Function that estimates joint rank by method of profile likelihood.
 }
-\examples{
-data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
-X1 = data$X1[[1]]
-X2 = data$X2[[1]]
-svd_x1 = svd(X1)
-svd_x2 = svd(X2)
-r1 = ProfileLikCluster(svd_x1$d)$index
-r2 = ProfileLikCluster(svd_x2$d)$index
-X1_est_c = as.matrix(svd_x1$u[,1:r1])
-X2_est_c = as.matrix(svd_x2$u[,1:r2])
-angle_result_c = angle_cal(X1_est_c, X2_est_c)
-joint_rank_c = joint_angle_cluster(angle_result_c$angle)$joint_rank
-
-}

@@ -5,7 +5,6 @@
 #' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
 #' 
 #' @return A vector of length 2 that contains the estimated variance for the two vectors
-#'
 VarianceMLE <- function(x, y, variance = c("equal", "unequal")){
   variance = match.arg(variance)
   m = length(x)
@@ -53,7 +52,6 @@ VarianceMLE <- function(x, y, variance = c("equal", "unequal")){
 #' @param variance Either "equal" or "unequal", i.e., whether the assumption is equal variance or unequal variance. If no input is given, equal variance is assumed.
 #'
 #' @return The calculated profile log-likelihood
-#'
 ProfileLoglik <- function(x, y, variance = c("equal", "unequal")){
   variance = match.arg(variance)
   mu1 = mean(x)
@@ -72,10 +70,6 @@ ProfileLoglik <- function(x, y, variance = c("equal", "unequal")){
 #' @return A list that contains the following elements:
 #' \item{index}{The index that separates the vector \code{x}. The element at the index is considered in the first cluster}
 #' \item{profileloglikvec}{A vector containing profile log-likelihood for each index}
-#'
-#' @examples
-#' x = c(20,9.5,9,8,6,5,4.5,3)
-#' ProfileLikClusterEqual(x)
 ProfileLikClusterEqual <- function(x){
   l = length(x)
   if (l == 1){

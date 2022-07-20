@@ -1,4 +1,4 @@
-# Update function for R (individual column space)
+# Function for updating individual column space
 updateR <- function(X, P_rall, P_c, dimR){
   n = nrow(X)
   if (dimR == 0){
@@ -12,7 +12,7 @@ updateR <- function(X, P_rall, P_c, dimR){
   return(R)
 }
 
-# Update function for S (individual row space)
+# Function for updating individual row space
 updateS <- function(X, P_call, P_r, dimS){
   p = ncol(X)
   # Edge case when there is no individual.
@@ -27,7 +27,7 @@ updateS <- function(X, P_call, P_r, dimS){
   return(S)
 }
 
-# Update function for joint column structure M given two individuals.
+# Function for updating joint column structure M given two individuals.
 updateM <- function(X1, X2, R1, R2, rc){
   n = nrow(X1)
   if (rc == 0){
@@ -70,7 +70,7 @@ updateM <- function(X1, X2, R1, R2, rc){
   }
 }
 
-# Update function for joint row structure N given two individuals S1 and S2.
+# Function for updating joint row structure N given two individuals.
 updateN <- function(X1, X2, S1, S2, rr){
   p = ncol(X1)
   if (rr == 0){
@@ -114,22 +114,50 @@ updateN <- function(X1, X2, S1, S2, rr){
 }
 
 #' Main function of iterative DMMD algorithm
-#'
-#' @param X1 The first matrix.
-#' @param X2 The second matrix.
-#' @param eps Tolerance, default is the square root of machine precision.
-#' @param r1 The total rank X1. Default is NULL, which means unknown.
-#' @param r2 The total rank X2. Default is NULL, which means unknown.
-#' @param rc The joint column rank. Default is NULL, which means unknown.
-#' @param rr The joint row rank. Default is NULL, which means unknown.
-#' @param kmax The maximum iterations. Default is 1000.
-#' @param verbose Do you want to see the progress of the function? Default is F, which means there is no progress shown.
+#' @details This function decomposed double-matched matrices according to Lemma 1 in Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860. This function also updates the joint structures M and N compared to DMMD function.
+#' @param X1 The first noisy data matrix
+#' @param X2 The second noisy data matrix
+#' @param r1 Total rank for X1. Default is NULL, meaning unknown, which will be estimated by rank estimation procedure determined by 'method'
+#' @param r2 Total rank for X2. Default is NULL, meaning unknown, which will be estimated by rank estimation procedure determined by 'method'
+#' @param rc Joint column rank. Default is NULL, meaning unknown, which will be estimated by profile likelihood method
+#' @param rr Joint row rank. Default is NULL, meaning unknown, which will be estimated by profile likelihood method
+#' @param angle_threshold The threshold angle for principal angles. Principal angles greater than the threshold are not considered as joint signal. Default is 90 degree
+#' @param variance1 Either "equal" or "unequal". Default is "equal". This argument is the variance assumption used in the profile likelihood method for determining the total rank
+#' @param variance2 Either "equal" or "unequal". Default is "equal". This argument is the variance assumption used in the profile likelihood method for determining the joint rank
+#' @param method The method used for determining the total ranks r1 and r2. Either "PL" (profile likelihood) or "ED" (edge distribution). Default is "PL"
+#' @param tol The tolerance used to determine convergence. Default is the square root of the machine precision 
+#' @param maxiter Maximum number of iterations allowed in the iterative algorithm. Default is 1000
+#' @param verbose Do you want to see the calculating progress of the function? Default is FALSE, which means the function stays silent.
 
-DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", method = "PL", eps = .Machine$double.eps^0.5, kmax = 1000, verbose = FALSE){
-  # Check the input of method
-  if (method != "PL" & method != "ED"){
-    stop("Method must be either 'ED' or 'PL'.")
-  }
+#' @return A list with the following elements:
+#' \item{r1}{The estimated total rank for X1, if not specified}
+#' \item{r2}{The estimated total rank for X2, if not specified}
+#' \item{rc}{The estimated joint column rank for X1, if not specified}
+#' \item{rr}{The estimated joint row rank for X1, if not specified}
+#' \item{A1}{The estimated low-rank signal matrix of X1}
+#' \item{A2}{The estimated low-rank signal matrix of X2}
+#' \item{E1}{The noise matrix of X1, \deqn{X_1 = A_1 + E_1}}
+#' \item{E2}{The noise matrix of X2, \deqn{X_2 = A_2 + E_2}}
+#' \item{Jc1}{The estimated low-rank joint column signal for X1}
+#' \item{Jc2}{The estimated low-rank joint column signal for X2}
+#' \item{Jr1}{The estimated low-rank joint row signal for X1}
+#' \item{Jr2}{The estimated low-rank joint row signal for X2}
+#' \item{Ic1}{The estimated low-rank individual column signal for X1}
+#' \item{Ic2}{The estimated low-rank individual column signal for X2}
+#' \item{Ir1}{The estimated low-rank individual row signal for X1}
+#' \item{Ir2}{The estimated low-rank individual row signal for X2} 
+#' \item{obj_vec}{A vector of objective values calculated at each iteration}
+#' @export
+
+#' @examples
+#' data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
+#' X1 = data$X1[[1]]
+#' X2 = data$X2[[1]]
+#' result = DMMD_i(X1,X2, verbose = TRUE)
+DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = c("equal", "unequal"), variance2 = c("equal", "unequal"), method = c("PL", "ED"), tol = .Machine$double.eps^0.5, maxiter = 1000, verbose = FALSE){
+  variance1 = match.arg(variance1)
+  variance2 = match.arg(variance2)
+  method = match.arg(method)
   # Check if the column names are equal
   if (!identical(colnames(X1), colnames(X2))){
     warning("This is an algorithm for double matched matrices. The column names of given matrices do not match")
@@ -167,7 +195,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
       r1 = ProfileLikCluster(svd_x1$d, variance = variance1)$index
     }
     if (method == "ED"){
-      r1 = Select_ED_Rank(svd_x1$d, maxiter = kmax)
+      r1 = Select_ED_Rank(svd_x1$d, maxiter = maxiter)
     }
   }
   if (is.null(r2)){
@@ -175,7 +203,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
       r2 = ProfileLikCluster(svd_x2$d, variance = variance1)$index
     }
     if (method == "ED"){
-      r2 = Select_ED_Rank(svd_x2$d, maxiter = kmax)
+      r2 = Select_ED_Rank(svd_x2$d, maxiter = maxiter)
     }
   }
   # Check if the specified joint rank is legal
@@ -256,7 +284,7 @@ DMMD_i <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_thr
   k = 0
   error = 1000
   # Main while loop
-  while((error > eps)&(k < kmax)){
+  while((error > tol)&(k < maxiter)){
     # Count iterations
     k = k + 1
     if (verbose){

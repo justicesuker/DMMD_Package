@@ -2,27 +2,31 @@
 % Please edit documentation in R/FindOptMatrix.R
 \name{FindOpt_SimplifiedCase}
 \alias{FindOpt_SimplifiedCase}
-\title{This function only works when either the rank of M or N equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of FindOpt_DM_Iterative}
+\title{Function that calculates the optimal low-rank signal matrix given partial column and row space basis.}
 \usage{
 FindOpt_SimplifiedCase(X, M, N, r)
 }
 \arguments{
-\item{X}{The original matrix (m by n)}
+\item{X}{The noisy matrix (n by p)}
 
-\item{M}{The column space that the output matrix should have}
+\item{M}{The column space that the output signal matrix contains (n by \deqn{r_c})}
 
-\item{N}{The row space that the output matrix should have}
+\item{N}{The row space that the output signal matrix contains (p by \deqn{r_r})}
 
-\item{r}{The rank of output matrix}
+\item{r}{The rank of output signal matrix (\deqn{r = max(r_c, r_r)})}
 }
 \value{
-A matrix that is the solution to the optimization problem.
+A list with the following elements:
+\item{result}{A matrix that is the solution to the optimization problem}
+\item{R}{The remaining \deqn{r - r_c} number of column bases}
+\item{S}{The remaining \deqn{r - r_r} column bases}
 }
 \description{
-This function only works when either the rank of M or N equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of FindOpt_DM_Iterative
+Function that calculates the optimal low-rank signal matrix given partial column and row space basis.
 }
 \details{
-The resulting matrix is the solution the following problem:
+This function only works when either the rank of M (column space basis) or N (row space basis) equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of 'FindOpt_DM_Iterative' function.
+The resulting matrix is the solution to the following problem:
 \deqn{min_{Y}{||X - Y||^2_F}}
 subject to \deqn{M is a subset of column space of Y, N is a subset of row space of Y}
 }

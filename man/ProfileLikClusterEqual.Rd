@@ -17,7 +17,3 @@ A list that contains the following elements:
 \description{
 Preliminary function that separates a vector into two groups using profile likelihood assuming equal variance.
 }
-\examples{
-x = c(20,9.5,9,8,6,5,4.5,3)
-ProfileLikClusterEqual(x)
-}

@@ -51,7 +51,7 @@ angle_result_c = angle_cal(X1_est_c, X2_est_c, tol = tol)
 principal_angle_c = angle_result_c$angle
 joint_rank_c = joint_angle_cluster(principal_angle_c)$joint_rank
 
-result_DMMD = DMMD(X1,X2)
+result_DMMD = DMMD_Fit(X1,X2)
 result_DMMD$rc
 result_DMMDi = DMMD_i(X1,X2, verbose = TRUE)
 ```

@@ -38,6 +38,19 @@ DoubleDataGen(
 
 \item{ub}{The upper bound for the singular values. Generated singular values are further scaled so that their sum of square equals to the total rank.}
 }
+\value{
+A list with the following elements:
+\item{X1}{A list of generated first noisy data matrices, with length nrep}
+\item{X2}{A list of generated second noisy data matrices, with length nrep}
+\item{A1}{A list of generated first low-rank signal matrices, with length nrep}
+\item{A2}{A list of generated second low-rank signal matrices, with length nrep}
+\item{M}{A list of generated joint column basis matrices, with length nrep}
+\item{N}{A list of generated joint row basis matrices, with length nrep}
+\item{R1}{A list of generated first individual column basis matrices, with length nrep}
+\item{R2}{A list of generated second individual column basis matrices, with length nrep}
+\item{S1}{A list of generated first individual row basis matrices, with length nrep}
+\item{S2}{A list of generated second individual row basis matrices, with length nrep}
+}
 \description{
 Function that generates double-matched data matrices.
 }

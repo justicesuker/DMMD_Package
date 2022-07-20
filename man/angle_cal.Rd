@@ -21,9 +21,3 @@ A list that contains the following:
 \description{
 Function that calculates principal angles between column spaces of two matrices
 }
-\examples{
-X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
-Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
-angle_cal(X,Y)
-
-}

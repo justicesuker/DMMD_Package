@@ -1,15 +1,15 @@
-#' Function that calculates the optimal matrix in single matched case
+#' Function that calculates the optimal low-rank signal matrix given partial column space basis
 #'  
-#' @param X The original matrix
-#' @param M The column space that the output matrix should have 
-#' @param r The rank of output matrix
+#' @param X The noisy data matrix
+#' @param M The column space that the output signal matrix contains
+#' @param r The rank of output signal matrix
 #' 
 #' @details The resulting matrix is the solution the following problem:
 #' \deqn{min_{Y}{||X - Y||^2_F}}
 #' subject to \deqn{M is a subset of column space of Y}
 #' 
 #' @return A matrix that is the solution to the optimization problem.
-#'
+#' @export
 #' @examples 
 #' X = matrix(c(2,1,1,3,2,2),nrow = 3)
 #' M = matrix(c(1,1,0),nrow = 3)
@@ -33,17 +33,20 @@ FindOpt_SM <- function(X, M, r){
   return(result)
 }
 
-#' This function only works when either the rank of M or N equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of FindOpt_DM_Iterative
-#' @param X The original matrix (m by n)
-#' @param M The column space that the output matrix should have 
-#' @param N The row space that the output matrix should have
-#' @param r The rank of output matrix
-#' 
-#' @details The resulting matrix is the solution the following problem:
+#' Function that calculates the optimal low-rank signal matrix given partial column and row space basis.
+#' @details This function only works when either the rank of M (column space basis) or N (row space basis) equal to the specified rank r (\deqn{r = max(r_c, r_r)}). It's a prerequisite of 'FindOpt_DM_Iterative' function.
+#' The resulting matrix is the solution to the following problem:
 #' \deqn{min_{Y}{||X - Y||^2_F}}
 #' subject to \deqn{M is a subset of column space of Y, N is a subset of row space of Y}
-#' 
-#' @return A matrix that is the solution to the optimization problem.
+#' @param X The noisy matrix (n by p)
+#' @param M The column space that the output signal matrix contains (n by \deqn{r_c})
+#' @param N The row space that the output signal matrix contains (p by \deqn{r_r})
+#' @param r The rank of output signal matrix (\deqn{r = max(r_c, r_r)})
+#' @return A list with the following elements:
+#' \item{result}{A matrix that is the solution to the optimization problem}
+#' \item{R}{The remaining \deqn{r - r_c} number of column bases}
+#' \item{S}{The remaining \deqn{r - r_r} column bases}
+
 FindOpt_SimplifiedCase<- function(X, M, N, r){
   r_m = dim(M)[2]
   r_n = dim(N)[2]
@@ -79,10 +82,29 @@ FindOpt_SimplifiedCase<- function(X, M, N, r){
   }
 }
 
-# An iterative function that solves the optimization problem of (2) in the manuscript.
-# M is the column space that the solution should have
-# N is the row space that the solution should have
-# r is the rank
+#' Function that iteratively calculates the optimal low-rank signal matrix given partial column and row space basis.
+#' @details This function solves the optimization problem of (2) in Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860, that is:
+#' \deqn{min_{A}{||X - A||^2_F}}
+#' subject to \deqn{M is a subset of column space of A, N is a subset of row space of A}
+#' @param X The noisy matrix. The dimension is n by p
+#' @param M The column space that the signal matrix contains. The dimension is n by \deqn{r_c}
+#' @param N The row space that the signal matrix contains. The dimension is p by \deqn{r_r}
+#' @param r The rank of output signal matrix
+#' @param maxiter The maximum number of iterations allowed in the calculation. Default is 1e4
+#' @param tol The tolerance used to monitor the convergence. Default is the square root of machine precision
+#' @return A list with the following elements:
+#' \item{result}{A matrix that is the estimated solution to the optimization problem}
+#' \item{R}{The remaining \deqn{r - r_c} column bases}
+#' \item{S}{The remaining \deqn{r - r_r} row bases}
+#' \item{num_iter}{The actual number of iteration run}
+#' \item{opt_function_val}{A vector of objective values calculated at each iteration. It is supposed to be monotonically decreasing}
+#' @examples
+#' X = matrix(c(2,1,1,3,2,2),nrow = 3)
+#' M = matrix(c(1,1,0), nrow = 3)
+#' N = matrix(c(0,1), nrow = 2)
+#' r = 2
+#' FindOpt_DM_Iterative(X, M, N, r)
+#' @export
 FindOpt_DM_Iterative <- function(X, M, N, r, maxiter = 1e4, tol = .Machine$double.eps^0.5){
   M = as.matrix(M)
   N = as.matrix(N)

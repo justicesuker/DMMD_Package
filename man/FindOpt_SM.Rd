@@ -2,22 +2,22 @@
 % Please edit documentation in R/FindOptMatrix.R
 \name{FindOpt_SM}
 \alias{FindOpt_SM}
-\title{Function that calculates the optimal matrix in single matched case}
+\title{Function that calculates the optimal low-rank signal matrix given partial column space basis}
 \usage{
 FindOpt_SM(X, M, r)
 }
 \arguments{
-\item{X}{The original matrix}
+\item{X}{The noisy data matrix}
 
-\item{M}{The column space that the output matrix should have}
+\item{M}{The column space that the output signal matrix contains}
 
-\item{r}{The rank of output matrix}
+\item{r}{The rank of output signal matrix}
 }
 \value{
 A matrix that is the solution to the optimization problem.
 }
 \description{
-Function that calculates the optimal matrix in single matched case
+Function that calculates the optimal low-rank signal matrix given partial column space basis
 }
 \details{
 The resulting matrix is the solution the following problem:

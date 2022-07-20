@@ -24,8 +24,3 @@ Function that double standardizes a matrix
 \details{
 After double standardization, the matrix will have mean zero and (population) variance one for each row and column.
 }
-\examples{
-X = matrix(c(1,0,3,1,-1,4,5,0,6), nrow = 3, ncol = 3)
-DoubleStandardize(X)
-
-}

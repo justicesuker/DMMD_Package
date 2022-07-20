@@ -1,18 +1,48 @@
-# The main function that does double-matched matrix decomposition.
-# X1 and X2 are two double-matched matrices
-# r1, r2 are the total rank of r1 and r2. Default is NULL. If the total rank is known by some ways, please specify them.
-# joint_rank_c, joint_rank_r are the specified joint column rank and joint row rank. Default is NULL. It they are known, please specify.
-# angle_threshold: the argument that is used in calculating the joint rank, Principal angles that are greater than the threshold is not considered as joint signal. Default is 90 degree.
-# variance1. Either "equal" or "unequal". Default is "equal". This argument is used in the profile likelihood method for determining the total rank
-# variance2. Either "equal" or "unequal". Default is "equal". This argument is used in the profile likelihood method for determining the joint rank
-# method. Either "PL" (profile likelihood) or "ED" (edge distribution). Default is "PL" for determining the rank.
-# tol. Tolerence for determining convergence.
-# maxiter. Default is 1000, which is used for the maximum iteration allowed in the iterative procedure.
-DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r = NULL, angle_threshold = 90 * pi/180, variance1 = "equal", variance2 = "equal", method = "PL", tol = .Machine$double.eps^0.5, maxiter = 1e3){
+#' Main function of double-matched matrix decomposition.
+#' @details This function decomposed double-matched matrices according to Lemma 1 in Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860.
+#' @param X1 The first noisy data matrix
+#' @param X2 The second noisy data matrix
+#' @param r1 Total rank for X1. Default is NULL, meaning unknown, which will be estimated by rank estimation procedure determined by 'method'
+#' @param r2 Total rank for X2. Default is NULL, meaning unknown, which will be estimated by rank estimation procedure determined by 'method'
+#' @param rc Joint column rank. Default is NULL, meaning unknown, which will be estimated by profile likelihood method
+#' @param rr Joint row rank. Default is NULL, meaning unknown, which will be estimated by profile likelihood method
+#' @param angle_threshold The threshold angle for principal angles. Principal angles greater than the threshold are not considered as joint signal. Default is 90 degree
+#' @param variance1 Either "equal" or "unequal". Default is "equal". This argument is the variance assumption used in the profile likelihood method for determining the total rank
+#' @param variance2 Either "equal" or "unequal". Default is "equal". This argument is the variance assumption used in the profile likelihood method for determining the joint rank
+#' @param method The method used for determining the total ranks r1 and r2. Either "PL" (profile likelihood) or "ED" (edge distribution). Default is "PL"
+#' @param tol The tolerance used to determine convergence. Default is the square root of the machine precision 
+#' @param maxiter Maximum number of iterations allowed in the iterative algorithm. Default is 1000
+#'
+#' @return A list with the following elements:
+#' \item{r1}{The estimated total rank for X1, if not specified}
+#' \item{r2}{The estimated total rank for X2, if not specified}
+#' \item{rc}{The estimated joint column rank for X1, if not specified}
+#' \item{rr}{The estimated joint row rank for X1, if not specified}
+#' \item{A1}{The estimated low-rank signal matrix of X1}
+#' \item{A2}{The estimated low-rank signal matrix of X2}
+#' \item{E1}{The noise matrix of X1, \deqn{X_1 = A_1 + E_1}}
+#' \item{E2}{The noise matrix of X2, \deqn{X_2 = A_2 + E_2}}
+#' \item{Jc1}{The estimated low-rank joint column signal for X1}
+#' \item{Jc2}{The estimated low-rank joint column signal for X2}
+#' \item{Jr1}{The estimated low-rank joint row signal for X1}
+#' \item{Jr2}{The estimated low-rank joint row signal for X2}
+#' \item{Ic1}{The estimated low-rank individual column signal for X1}
+#' \item{Ic2}{The estimated low-rank individual column signal for X2}
+#' \item{Ir1}{The estimated low-rank individual row signal for X1}
+#' \item{Ir2}{The estimated low-rank individual row signal for X2} 
+#' @export
+#'
+#' @examples
+#' data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
+#' X1 = data$X1[[1]]
+#' X2 = data$X2[[1]]
+#' result_DMMD = DMMD_Fit(X1,X2)
+
+DMMD_Fit <- function(X1, X2, r1 = NULL, r2 = NULL, rc = NULL, rr = NULL, angle_threshold = 90 * pi/180, variance1 = c("equal", "unequal"), variance2 = c("equal", "unequal"), method = c("PL", "ED"), tol = .Machine$double.eps^0.5, maxiter = 1e3){
   # Check the input of method
-  if (method != "PL" & method != "ED"){
-    stop("Method must be either 'ED' or 'PL'.")
-  }
+  variance1 = match.arg(variance1)
+  variance2 = match.arg(variance2)
+  method = match.arg(method)
   # Check if the column names are equal
   if (!identical(colnames(X1), colnames(X2))){
     warning("This is an algorithm for double matched matrices. The column names of given matrices do not match")
@@ -50,8 +80,8 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
     }
   }
   # Check if the specified joint rank is legal
-  if (!is.null(joint_rank_c) | !is.null(joint_rank_r)){
-    if (max(joint_rank_c,joint_rank_r) > min(r1, r2)){
+  if (!is.null(rc) | !is.null(rr)){
+    if (max(rc,rr) > min(r1, r2)){
       stop("The specified joint rank is not legal, please check.")
     }
   }
@@ -69,13 +99,13 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   pv1_c = angle_result_c$principal_vector1
   pv2_c = angle_result_c$principal_vector2
   # If the specified joint column rank is NULL. Calculate it using the PL or ED method specified.
-  if (is.null(joint_rank_c)){
-    joint_rank_c = joint_angle_cluster(
+  if (is.null(rc)){
+    rc = joint_angle_cluster(
       principal_angle_c, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
-  # Get the estimated column space by averaging the smallest joint_rank_c number of principal vectors  
-  if (joint_rank_c > 0){
-    joint_space_c = (pv1_c[,1:joint_rank_c] + pv2_c[,1:joint_rank_c])/2
+  # Get the estimated column space by averaging the smallest rc number of principal vectors  
+  if (rc > 0){
+    joint_space_c = (pv1_c[,1:rc] + pv2_c[,1:rc])/2
     P_c = projection(joint_space_c)
   } 
 
@@ -87,21 +117,21 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
   pv1_r = angle_result_r$principal_vector1
   pv2_r = angle_result_r$principal_vector2
   # If the specified joint row rank is NULL. Calculate it using the PL or ED method specified.
-  if (is.null(joint_rank_r)){
-    joint_rank_r = joint_angle_cluster(
+  if (is.null(rr)){
+    rr = joint_angle_cluster(
       principal_angle_r, angle_threshold = angle_threshold, variance = variance2)$joint_rank
   }
-  # Get the estimated row space by averaging the smallest joint_rank_r number of principal vectors 
-  if (joint_rank_r > 0){
-    joint_space_r = (pv1_r[,1:joint_rank_r] + pv2_r[,1:joint_rank_r])/2
+  # Get the estimated row space by averaging the smallest rr number of principal vectors 
+  if (rr > 0){
+    joint_space_r = (pv1_r[,1:rr] + pv2_r[,1:rr])/2
     P_r = projection(joint_space_r)
   }
 
   # Consider the edge cases when joint rank is 0
-  if (joint_rank_c == 0 || joint_rank_r == 0){
-    if (joint_rank_c == 0){
+  if (rc == 0 || rr == 0){
+    if (rc == 0){
       # Both joint column and row rank are 0: joint structure is 0.
-      if (joint_rank_r == 0){
+      if (rr == 0){
         signal_mat1 = svd_recover(X1, svd_result = svd_x1, r1)
         signal_mat2 = svd_recover(X2, svd_result = svd_x2, r2)
         J1_c = matrix(rep(0,n*p), nrow = n, ncol = p)
@@ -188,7 +218,7 @@ DMMD <- function(X1, X2, r1 = NULL, r2 = NULL, joint_rank_c = NULL, joint_rank_r
                            "Joint Row 2" = J2_r, "Individual Row 2" = I2_r)
   error = list("Error1" = E1, "Error2" = E2)
   
-  return(list(r1 = r1, r2 = r2, rc = joint_rank_c, rr = joint_rank_r,
+  return(list(r1 = r1, r2 = r2, rc = rc, rr = rr,
               A1 = signal_mat1, A2 = signal_mat2, E1 = E1, E2 = E2, 
               Jc1 = J1_c, Jc2 = J2_c, Jr1 = J1_r, Jr2 = J2_r,
               Ic1 = I1_c, Ic2 = I2_c, Ir1 = I1_r, Ir2 = I2_r))

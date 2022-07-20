@@ -8,12 +8,6 @@
 #' \item{cos_angle}{A vector of cosine principal angles}
 #' \item{principal_vector1}{Principal vectors of matrix \code{X}}
 #' \item{principal_vector2}{Principal vectors of matrix \code{Y}}
-#'
-#' @examples
-#' X = matrix(c(1,1,1,1,1,0),nrow = 3, ncol = 2)
-#' Y = matrix(c(1,1,1,2,1,0),nrow = 3, ncol = 2)
-#' angle_cal(X,Y)
-#' 
 angle_cal <- function(X, Y){
   X = as.matrix(X)
   Y = as.matrix(Y)
@@ -64,21 +58,6 @@ angle_cal <- function(X, Y){
 #' @return A list with the following elements:
 #' \item{joint_rank}{Estimated joint rank}
 #' \item{profileloglikvec}{Profile log likelihood calculated at each index. Function returns NA with a warning message, if less or equal to 2 principal angles are smaller than the threshold.}
-
-#' @export
-#' @examples
-#' data = DoubleDataGen(n = 20, p = 16, rank = c(4, 3), rc = 2, rr = 1, nrep = 1)
-#' X1 = data$X1[[1]]
-#' X2 = data$X2[[1]]
-#' svd_x1 = svd(X1)
-#' svd_x2 = svd(X2)
-#' r1 = ProfileLikCluster(svd_x1$d)$index
-#' r2 = ProfileLikCluster(svd_x2$d)$index
-#' X1_est_c = as.matrix(svd_x1$u[,1:r1])
-#' X2_est_c = as.matrix(svd_x2$u[,1:r2])
-#' angle_result_c = angle_cal(X1_est_c, X2_est_c)
-#' joint_rank_c = joint_angle_cluster(angle_result_c$angle)$joint_rank
-#' 
 joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, variance = c("equal", "unequal")){
   variance = match.arg(variance)
   if (angle_threshold > 90 * pi/180){
@@ -158,7 +137,6 @@ joint_angle_cluster <- function(angle_vec, angle_threshold = 90 * pi/180, varian
 #' @return A list that contains the following:
 #' \item{result}{The joint column basis matrix}
 #' \item{joint_rank}{Estimated joint rank, if not given}
-#'
 SUM_PCA_joint <- function(X, k = 2, joint_rank = NULL){
   n = dim(X)[1]
   p = dim(X)[2]/k
