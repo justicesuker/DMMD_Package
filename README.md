@@ -1,5 +1,5 @@
 # DMMD_Package
-An INCOMPLETE R package that does decomposition on double-matched multi-view matrices. 
+A R package that performs Double-Matched Matrix Decomposition (DMMD). 
 
 Description 
 -------
