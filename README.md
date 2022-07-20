@@ -1,14 +1,16 @@
 # DMMD_Package
-A R package that performs Double-Matched Matrix Decomposition (DMMD). 
+R package that performs Double-Matched Matrix Decomposition (DMMD). 
 
-Description 
+Description
 -------
 
-The goal of DMMD package is to extract joint and individual signals from double matched multi-view matrices. For example, if we have one matrice that contains gene data collected in normal tissue and one matrice collected in cancer tissue, it is helpful to use my package to find out genes that are common to both normal and cancer tissues and genes that are unique. Another example is about recommendation system. If we have two data sets that contain rankings of movies from various people in different time, by using the package, researchers can know signals (movies) that are not changed with time. There is a R package called *r.jive* which has similar functionality, but is slow, and can only do one-way matched matrix analysis. 
+The goal of DMMD package is to extract joint and individual signals from double-matched multi-view matrices. The main function is DMMD_Fit, which can do double-matched matrix factorization efficiently. DMMD_i is the updated version of DMMD_Fit which also updates the joint structure but is less efficient. The rank selection is based on the method of profile likelihood or edge distribution. There is a function of \code{DoubleDataGen} which can generate double-matched matrices that can be used to test functions.
 
-In this package, the main function is DMMD, which can do single-matched matrix factorization efficiently. The rank selection is based on the method of profile likelihood. There is a function of *DoubleDataGen* which can generate double-matched matrices. Another main function is DMMD_i which also updates joint structure. It is generally more accurate compared to DMMD but computationally less efficient.
+Reference
+-------
+[Dongbang Yuan & Irina Gaynanova (2022) Double-Matched Matrix Decomposition for Multi-View Data, Journal of Computational and Graphical Statistics, DOI: 10.1080/10618600.2022.2067860](https://www.tandfonline.com/doi/abs/10.1080/10618600.2022.2067860)
 
-References
+See also
 -------
 [Feng, Qing, et al. "Angle-based joint and individual variation explained." Journal of multivariate analysis 166 (2018): 241-265.](https://arxiv.org/pdf/1704.02060.pdf).
 
