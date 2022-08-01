@@ -9,6 +9,12 @@ Description: Extract joint and individual signals from double matched multi-view
 Imports: stats
 License: GPL-3
 RoxygenNote: 7.2.0
-Suggests: knitr, rmarkdown, ComplexHeatmap, ggplot2
+Suggests: 
+    knitr,
+    rmarkdown,
+    ComplexHeatmap,
+    ggplot2,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Encoding: UTF-8
+Config/testthat/edition: 3
